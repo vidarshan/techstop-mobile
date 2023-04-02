@@ -1,27 +1,26 @@
 import React from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
-
-const {height} = Dimensions.get('screen');
+import {Provider} from 'react-redux';
+import {store} from './store/store';
+import ProductsScreen from './screens/ProductsScreen';
+import {navigationRef} from './RootNavigation';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const App = () => {
+  const Stack = createNativeStackNavigator();
   return (
-    <View style={styles.container}>
-      <View style={styles.center}>
-        <Text>Hello React Native Web!!!</Text>
-      </View>
-    </View>
+    <Provider store={store}>
+      <NavigationContainer ref={navigationRef}>
+        <Stack.Screen
+          name="Initial"
+          component={ProductsScreen}
+          options={{headerShown: false, gestureEnabled: true}}
+        />
+      </NavigationContainer>
+    </Provider>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    height,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+// const styles = StyleSheet.create({});
 
 export default App;
