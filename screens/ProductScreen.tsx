@@ -6,11 +6,11 @@ import {
   StyleSheet,
   TouchableHighlight,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 import {IProductScreen} from '../models/IProductScreen';
 import {ScrollView} from 'react-native-gesture-handler';
-
-const ProductScreen: FC<IProductScreen> = ({route, navigation}) => {
+const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   const {
     name,
     brand,
@@ -22,52 +22,84 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}) => {
     reviews,
     image,
   } = route.params;
+  console.log(navigation);
   return (
-    <SafeAreaView>
-      <ScrollView
-        contentContainerStyle={styles.contentContainer}
-        style={styles.container}>
-        <View style={styles.imgContainer}>
-          <Image style={styles.img} source={{uri: image}} />
-          <Text style={styles.brand}>{brand}</Text>
-          <Text style={styles.name}>{name}</Text>
-          <View style={styles.priceContainer}>
-            <Text style={styles.price}>${price}</Text>
-          </View>
-        </View>
-        {description?.split(', ').map((item: string) => {
-          return (
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.description}>{item}</Text>
+    <>
+      {Platform.OS === 'web' ? (
+        <Text>lll</Text>
+      ) : (
+        <SafeAreaView>
+          <ScrollView
+            contentContainerStyle={styles.contentContainer}
+            style={styles.container}>
+            <View style={styles.imgContainer}>
+              <Image style={styles.img} source={{uri: image}} />
+              <Text style={styles.brand}>{brand}</Text>
+              <Text style={styles.name}>{name}</Text>
+              <View style={styles.priceContainer}>
+                <Text style={styles.price}>${price}</Text>
+              </View>
+              <View style={styles.inStockContainer}>
+                <Text style={styles.inStock}>
+                  {countInStock === '0'
+                    ? 'None Available'
+                    : `${countInStock} Available`}
+                </Text>
+              </View>
             </View>
-          );
-        })}
-        <TouchableHighlight style={styles.addToCart}>
-          <Text style={styles.addToCartText}>Add to Cart</Text>
-        </TouchableHighlight>
-        <Text>Ratings and Reviews</Text>
-        <Text style={styles.rating}>⭐️⭐️⭐️⭐️⭐️{rating}</Text>
-        {/* <Icon name="star" size={30} color="#900" /> */}
-        {/* <Text>{numReviews}</Text>
+            {description?.split(', ').map((item: string) => {
+              return (
+                <View style={styles.descriptionContainer}>
+                  <Text style={styles.description}>{item}</Text>
+                </View>
+              );
+            })}
+            <TouchableHighlight style={styles.addToCart}>
+              <Text style={styles.addToCartText}>Add to Cart</Text>
+            </TouchableHighlight>
+            <Text>Ratings and Reviews</Text>
+            <Text style={styles.rating}>
+              {rating}⭐️⭐️⭐️⭐️⭐️{numReviews}
+            </Text>
+            {reviews && reviews.length ? (
+              reviews.map((review: any) => {
+                return (
+                  <View style={styles.commentCard}>
+                    <Text style={styles.commentName}>{review.name}</Text>
+                    <Text style={styles.commentContent}>{review.comment}</Text>
+                  </View>
+                );
+              })
+            ) : (
+              <Text style={styles.commentContent}>No comments</Text>
+            )}
+            {/* <Icon name="star" size={30} color="#900" /> */}
+            {/* <Text>{numReviews}</Text>
       <Text>{price}</Text>
       <Text>{countInStock}</Text>
       <Text>{reviews}</Text> */}
-      </ScrollView>
-    </SafeAreaView>
+          </ScrollView>
+        </SafeAreaView>
+      )}
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   contentContainer: {
     backgroundColor: '#fff',
+    marginTop: 8,
+    marginLeft: 8,
+    marginRight: 8,
   },
   container: {
     padding: 10,
     backgroundColor: '#fff',
   },
   imgContainer: {
-    marginBottom: 10,
+    marginBottom: 20,
     alignItems: 'center',
+    position: 'relative',
   },
   img: {
     width: 250,
@@ -96,24 +128,60 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   priceContainer: {
+    position: 'absolute',
+    justifyContent: 'center',
+    right: 10,
+    top: 0,
     alignItems: 'center',
+    backgroundColor: '#5D9C59',
+    padding: 10,
+    borderRadius: 8,
+    zIndex: 1000,
   },
   price: {
-    marginTop: 14,
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#3d7100',
+    color: '#fff',
   },
   addToCart: {
-    marginTop: 10,
-    backgroundColor: 'red',
+    marginTop: 20,
+    marginBottom: 20,
+    backgroundColor: '#DF2E38',
     padding: 12,
     borderRadius: 8,
   },
   addToCartText: {
     textAlign: 'center',
-    color: '#fff',
+    color: '#ffffff',
     fontWeight: '500',
+    fontSize: 16,
+  },
+  inStockContainer: {
+    marginTop: 8,
+    backgroundColor: '#5D9C59',
+    padding: 6,
+    borderRadius: 8,
+  },
+  inStock: {
+    fontSize: 12,
+    color: '#fff',
+    fontWeight: '600',
+  },
+  commentCard: {
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginTop: 10,
+    padding: 10,
+  },
+  commentName: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  commentContent: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginTop: 10,
   },
 });
 

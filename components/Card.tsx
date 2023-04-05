@@ -81,15 +81,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   button: {
-    backgroundColor: '#eaac00',
+    backgroundColor: '#DF2E38',
     padding: 8,
-    borderRadius: 4,
+    borderRadius: 8,
     width: '100%',
     marginTop: 10,
     marginLeft: 6,
     marginRight: 6,
   },
   buttonText: {
+    color: '#fff',
+    fontWeight: '600',
     textAlign: 'center',
   },
 });
