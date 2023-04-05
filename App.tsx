@@ -3,7 +3,7 @@ import {Provider} from 'react-redux';
 import {store} from './store/store';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import ProductsScreen from './screens/ProductsScreen';
-// import ProductScreen from './screens/ProductScreen';
+import ProductScreen from './screens/ProductScreen';
 
 const App = () => {
   console.log('dd');
@@ -12,7 +12,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<ProductsScreen navigation={{}} />} />
-          {/* <Route path="/product" element={<ProductScreen />} /> */}
+          <Route path="/product/:id" element={<ProductScreen />} />
         </Routes>
       </Router>
     </Provider>

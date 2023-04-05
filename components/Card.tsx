@@ -3,6 +3,7 @@ import {Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {ICard} from '../models/ICard';
 import {getPlatform} from '../utils/Platform';
 const Card: React.FC<ICard> = ({
+  _id,
   name,
   brand,
   description,
@@ -15,12 +16,13 @@ const Card: React.FC<ICard> = ({
   navigation,
   webNavigation,
 }) => {
+  console.log(_id);
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={() => {
         getPlatform() === 'web'
-          ? webNavigation('/product')
+          ? webNavigation(`product/${_id.$oid}`)
           : navigation.navigate('Product', {
               image: altImage,
               name,

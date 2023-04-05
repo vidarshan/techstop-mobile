@@ -1,6 +1,5 @@
 import React, {FC, useEffect} from 'react';
 import {
-  Text,
   View,
   ActivityIndicator,
   StyleSheet,
@@ -13,6 +12,7 @@ import {IProductsScreen} from '../models/IProductsScreen';
 //import {getProducts} from '../store/slices/productSlice';
 import {getPlatform} from '../utils/Platform';
 import {useNavigate} from 'react-router-dom';
+import WebHeader from '../components/WebHeader';
 
 const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
   let webNavigation = {};
@@ -31,11 +31,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
   return (
     <ScrollView>
       <SafeAreaView>
-        {getPlatform() === 'web' && (
-          <View style={styles.webHeader}>
-            <Text style={styles.webHeaderText}>Products</Text>
-          </View>
-        )}
+        {getPlatform() == 'web' && <WebHeader />}
         <View style={styles.container}>
           {loading ? (
             <View style={styles.loaderContainer}>
