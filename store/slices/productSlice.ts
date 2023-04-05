@@ -30,24 +30,70 @@ interface ProductState {
 const initialState: ProductState = {
   products: [
     {
-      _id: {$oid: '61fa9d3c54d0d0a51edccdea'},
+      _id: {$oid: '61f55a5762a68fe81c96d895'},
       user: {$oid: '61f550d52bf7a4e12af88ee9'},
-      name: 'Macbook Pro 14" M2 Pro',
-      image: '/images/dell9.jpeg',
-      brand: 'Dell',
-      category: 'Accessories',
+      name: 'Apple MacBook Pro 13.3 inch',
+      image: '/images/macbook.jpeg',
+      brand: 'Apple',
+      category: 'Laptops',
       description:
-        'Rechargeable lithium ion battery, Standard Keyboard and mouse',
-      rating: {$numberInt: '0'},
-      numReviews: {$numberInt: '0'},
-      price: {$numberDouble: '199.99'},
+        'Apple M1 chip with 8-core CPU, 8-core GPU, 16-core Neural Engine, 8GB unified memory, 256GB SSD storage, 13-inch Retina display with True Tone, Magic Keyboard, Touch Bar and Touch ID, Force Touch trackpad, Two Thunderbolt / USB 4 ports',
+      rating: {$numberInt: '4'},
+      numReviews: {$numberInt: '5'},
+      price: {$numberDouble: '1299.99'},
       countInStock: {$numberInt: '100'},
-      reviews: [],
-      createdAt: {$date: {$numberLong: '1643814204114'}},
-      updatedAt: {$date: {$numberLong: '1643814204114'}},
-      __v: {$numberInt: '0'},
+      reviews: [
+        {
+          name: 'John Doe',
+          rating: {$numberInt: '4'},
+          comment: 'This one is a good one.',
+          user: {$oid: '61f550d52bf7a4e12af88ee9'},
+          _id: {$oid: '61f6d08fa8bdd68c3b1e063a'},
+          createdAt: {$date: {$numberLong: '1643565199023'}},
+          updatedAt: {$date: {$numberLong: '1643565199023'}},
+        },
+        {
+          name: 'Jake Doe',
+          rating: {$numberInt: '4'},
+          comment: 'This one is a good one.',
+          user: {$oid: '61f7673c4b2dce12c541eb88'},
+          _id: {$oid: '61f7674d4b2dce12c541eb8d'},
+          createdAt: {$date: {$numberLong: '1643603789283'}},
+          updatedAt: {$date: {$numberLong: '1643603789283'}},
+        },
+        {
+          name: 'Steve Smith',
+          rating: {$numberInt: '5'},
+          comment: 'Great and powerful laptop',
+          user: {$oid: '61f768334b2dce12c541eb96'},
+          _id: {$oid: '61f7684c4b2dce12c541eb9c'},
+          createdAt: {$date: {$numberLong: '1643604044026'}},
+          updatedAt: {$date: {$numberLong: '1643604044026'}},
+        },
+        {
+          name: 'John Doe',
+          rating: {$numberInt: '2'},
+          comment: 'Not so great😏',
+          user: {$oid: '61f541ad28c60fb31a63c900'},
+          _id: {$oid: '61f7947713b9100fafb74f60'},
+          createdAt: {$date: {$numberLong: '1643615351429'}},
+          updatedAt: {$date: {$numberLong: '1643615351429'}},
+        },
+        {
+          name: 'Rich Smith',
+          rating: {$numberInt: '5'},
+          comment: 'Good',
+          user: {$oid: '61f7dd8438831bef24804f18'},
+          _id: {$oid: '61f7ddbc38831bef24804f35'},
+          createdAt: {$date: {$numberLong: '1643634108980'}},
+          updatedAt: {$date: {$numberLong: '1643634108980'}},
+        },
+      ],
+      createdAt: {$date: {$numberLong: '1643469399372'}},
+      updatedAt: {$date: {$numberLong: '1643634108981'}},
+      __v: {$numberInt: '5'},
       altImage:
-        'https://res.cloudinary.com/dury4s2jk/image/upload/v1680417980/63ce49ee1ebbe1674463726_idwotp.jpg',
+        'https://res.cloudinary.com/dury4s2jk/image/upload/v1680417407/633c95ef27f191664914927_kyawha.jpg',
     },
     {
       _id: {$oid: '61fa9e1554d0d0a51edcce08'},
@@ -157,7 +203,6 @@ export const getProducts = createAsyncThunk('products/get', async () => {
   const response = await axios.get(
     'https://tech-stop.onrender.com/api/v1/products',
   );
-  console.log('response.data', response.data);
   return response.data;
 });
 

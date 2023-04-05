@@ -10,4 +10,5 @@ export interface ICard {
   countInStock?: number;
   reviews?: any[];
   altImage: string;
+  navigation?: any;
 }

@@ -1,14 +1,14 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View} from 'react-native';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import Card from '../components/Card';
+import {Link} from 'react-router-dom';
 //import {getProducts} from '../store/slices/productSlice';
 //import Card from '../components/Card';
 
-const ProductsScreen = () => {
+const ProductsScreen = ({navigation}) => {
   const dispatch = useAppDispatch();
   const {products, loading} = useAppSelector(state => state.products);
-  console.log('allStates', products);
 
   useEffect(() => {
     //dispatch(getProducts());
@@ -22,17 +22,26 @@ const ProductsScreen = () => {
         </View>
       ) : (
         <View style={styles.container}>
-          {products.map(product => {
-            console.log(product);
+          <View>
+            {Platform.OS === 'web' && <Link to="/product">Home</Link>}
+          </View>
+
+          {products.map((product, index) => {
             return (
               <Card
-                key={product._id}
+                key={index}
                 _id={product._id}
                 name={product.name}
                 altImage={product.altImage}
                 price={product.price.$numberDouble}
                 brand={product.brand}
                 category={product.category}
+                description={product.description}
+                rating={product.rating.$numberInt}
+                numReviews={product.numReviews.$numberInt}
+                countInStock={product.numReviews.$numberInt}
+                reviews={product.reviews}
+                navigation={navigation}
               />
             );
           })}

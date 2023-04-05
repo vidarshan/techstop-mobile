@@ -1,9 +1,14 @@
-import {createNavigationContainerRef} from '@react-navigation/native';
+// import {createStackNavigator} from '@react-navigation/stack';
 
-export const navigationRef = createNavigationContainerRef();
+// const Stack = createStackNavigator();
 
-export function navigate(name: any, params: any) {
-  if (navigationRef.isReady()) {
-    navigationRef.navigate(name as never, params as never);
-  }
-}
+// function MyStack() {
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen name="Home" component={Home} />
+//       <Stack.Screen name="Notifications" component={Notifications} />
+//       <Stack.Screen name="Profile" component={Profile} />
+//       <Stack.Screen name="Settings" component={Settings} />
+//     </Stack.Navigator>
+//   );
+// }

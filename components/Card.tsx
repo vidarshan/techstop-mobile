@@ -1,23 +1,35 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
-import {useAppSelector} from '../store/store';
+import {Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {ICard} from '../models/ICard';
 const Card: React.FC<ICard> = ({
   name,
   brand,
-  // description,
-  // rating,
-  // numReviews,
+  description,
+  rating,
+  numReviews,
   price,
-  // countInStock,
-  // reviews,
+  countInStock,
+  reviews,
   altImage,
+  navigation,
 }) => {
-  console.log(price);
-  const products = useAppSelector(state => state.products);
-  console.log('products', products);
+  console.log();
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() =>
+        navigation.navigate('Product', {
+          image: altImage,
+          name,
+          brand,
+          description,
+          rating,
+          numReviews,
+          price,
+          countInStock,
+          reviews,
+        })
+      }>
       <Image
         resizeMode="contain"
         style={{height: 100, width: 100}}
@@ -32,7 +44,10 @@ const Card: React.FC<ICard> = ({
         {name}
       </Text>
       <Text style={styles.price}>${price}</Text>
-    </View>
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>Add to Cart</Text>
+      </TouchableOpacity>
+    </TouchableOpacity>
   );
 };
 
@@ -40,15 +55,16 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#fff',
     borderRadius: 8,
     shadowColor: '#cbcbcb',
     shadowRadius: 10,
     shadowOpacity: 1,
     padding: 4,
-    width: 150,
-    height: 200,
-    margin: 4,
+    width: 170,
+    minHeight: 220,
+    margin: 8,
   },
   title: {
     fontSize: 14,
@@ -63,6 +79,18 @@ const styles = StyleSheet.create({
   price: {
     fontWeight: '500',
     fontSize: 18,
+  },
+  button: {
+    backgroundColor: '#eaac00',
+    padding: 8,
+    borderRadius: 4,
+    width: '100%',
+    marginTop: 10,
+    marginLeft: 6,
+    marginRight: 6,
+  },
+  buttonText: {
+    textAlign: 'center',
   },
 });
 

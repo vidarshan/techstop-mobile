@@ -1,26 +1,22 @@
-import React from 'react';
+import * as React from 'react';
 import {Provider} from 'react-redux';
 import {store} from './store/store';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import ProductsScreen from './screens/ProductsScreen';
-import {navigationRef} from './RootNavigation';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import ProductScreen from './screens/ProductScreen';
 
 const App = () => {
-  const Stack = createNativeStackNavigator();
+  console.log('dd');
   return (
     <Provider store={store}>
-      <NavigationContainer ref={navigationRef}>
-        <Stack.Screen
-          name="Initial"
-          component={ProductsScreen}
-          options={{headerShown: false, gestureEnabled: true}}
-        />
-      </NavigationContainer>
+      <Router>
+        <Routes>
+          <Route path="/" element={<ProductsScreen navigation={{}} />} />
+          <Route path="/product" element={<ProductScreen />} />
+        </Routes>
+      </Router>
     </Provider>
   );
 };
-
-// const styles = StyleSheet.create({});
 
 export default App;

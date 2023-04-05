@@ -29,6 +29,10 @@ module.exports = {
           'node_modules/react-native-vector-icons',
         ),
       },
+      // {
+      //   test: /\.(?:ico|gif|png|jpg|jpeg|svg)$/i,
+      //   type: 'asset/resource',
+      // },
     ],
   },
   plugins: [
