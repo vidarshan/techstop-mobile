@@ -13,7 +13,6 @@ const Card: React.FC<ICard> = ({
   altImage,
   navigation,
 }) => {
-  console.log();
   return (
     <TouchableOpacity
       style={styles.container}

@@ -6,10 +6,10 @@ import {
   StyleSheet,
   TouchableHighlight,
   SafeAreaView,
-  Platform,
 } from 'react-native';
 import {IProductScreen} from '../models/IProductScreen';
 import {ScrollView} from 'react-native-gesture-handler';
+import {getPlatform} from '../utils/Platform';
 const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   const {
     name,
@@ -25,7 +25,7 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   console.log(navigation);
   return (
     <>
-      {Platform.OS === 'web' ? (
+      {getPlatform() === 'web' ? (
         <Text>lll</Text>
       ) : (
         <SafeAreaView>
