@@ -19,7 +19,11 @@ const App = () => {
             headerTintColor: '#ffffff',
             headerStyle: {backgroundColor: '#DF2E38'},
           }}>
-          <Stack.Screen name="Home" component={ProductsScreen} />
+          <Stack.Screen
+            name="Home"
+            component={ProductsScreen}
+            options={{headerTitle: 'Products'}}
+          />
           <Stack.Screen name="Product" component={ProductScreen} />
         </Stack.Navigator>
       </NavigationContainer>

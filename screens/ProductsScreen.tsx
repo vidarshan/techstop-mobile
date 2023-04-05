@@ -1,32 +1,42 @@
 import React, {FC, useEffect} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {
+  Platform,
+  Text,
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import Card from '../components/Card';
 // import {Link} from 'react-router-dom';
 import {IProductsScreen} from '../models/IProductsScreen';
+import {getProducts} from '../store/slices/productSlice';
 
 const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
   const dispatch = useAppDispatch();
-  const {products, loading} = useAppSelector(state => state.products);
+  const {loading, products} = useAppSelector(state => state.products);
 
-  useEffect(() => {}, [dispatch]);
-
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [dispatch]);
+  console.log(navigation);
   return (
-    <>
-      {Platform.OS === 'web' ? (
-        <Text>DD</Text>
-      ) : (
-        <View>
+    <ScrollView>
+      <SafeAreaView>
+        {Platform.OS === 'web' && (
+          <View style={styles.webHeader}>
+            <Text style={styles.webHeaderText}>Products</Text>
+          </View>
+        )}
+        <View style={styles.container}>
           {loading ? (
-            <View style={{backgroundColor: 'red', height: 300}}>
-              <Text>Loading....</Text>
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="large" color="#DF2E38" />
             </View>
           ) : (
-            <View style={styles.container}>
-              <View>
-                {/* {Platform.OS === 'web' && <Link to="/product">Home</Link>} */}
-              </View>
-
+            <>
               {products.map((product, index) => {
                 return (
                   <Card
@@ -46,11 +56,11 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
                   />
                 );
               })}
-            </View>
+            </>
           )}
         </View>
-      )}
-    </>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
@@ -67,6 +77,20 @@ const styles = StyleSheet.create({
     width: 150,
     height: 100,
     margin: 4,
+  },
+  webHeader: {
+    backgroundColor: '#DF2E38',
+    padding: 20,
+  },
+  webHeaderText: {
+    color: '#fff',
+    textAlign: 'center',
+  },
+  loaderContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: Platform.OS === 'web' ? '100vh' : 100,
   },
 });
 
