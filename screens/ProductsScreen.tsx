@@ -9,19 +9,25 @@ import {
 } from 'react-native';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import Card from '../components/Card';
-// import {Link} from 'react-router-dom';
 import {IProductsScreen} from '../models/IProductsScreen';
 //import {getProducts} from '../store/slices/productSlice';
 import {getPlatform} from '../utils/Platform';
+import {useNavigate} from 'react-router-dom';
 
 const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
+  let webNavigation = {};
   const dispatch = useAppDispatch();
+  if (getPlatform() === 'web') {
+    //disabled check to ensure that this doesnt get initialized on mobile OS.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    webNavigation = useNavigate();
+  }
+
   const {loading, products} = useAppSelector(state => state.products);
 
   useEffect(() => {
     //dispatch(getProducts());
   }, [dispatch]);
-  console.log(navigation);
   return (
     <ScrollView>
       <SafeAreaView>
@@ -53,6 +59,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
                     countInStock={product.numReviews.$numberInt}
                     reviews={product.reviews}
                     navigation={navigation}
+                    webNavigation={webNavigation}
                   />
                 );
               })}

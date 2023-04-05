@@ -11,4 +11,5 @@ export interface ICard {
   reviews?: any[];
   altImage: string;
   navigation?: any;
+  webNavigation?: any;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import {Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {ICard} from '../models/ICard';
+import {getPlatform} from '../utils/Platform';
 const Card: React.FC<ICard> = ({
   name,
   brand,
@@ -12,23 +13,26 @@ const Card: React.FC<ICard> = ({
   reviews,
   altImage,
   navigation,
+  webNavigation,
 }) => {
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() =>
-        navigation.navigate('Product', {
-          image: altImage,
-          name,
-          brand,
-          description,
-          rating,
-          numReviews,
-          price,
-          countInStock,
-          reviews,
-        })
-      }>
+      onPress={() => {
+        getPlatform() === 'web'
+          ? webNavigation('/product')
+          : navigation.navigate('Product', {
+              image: altImage,
+              name,
+              brand,
+              description,
+              rating,
+              numReviews,
+              price,
+              countInStock,
+              reviews,
+            });
+      }}>
       <Image
         resizeMode="contain"
         style={{height: 100, width: 100}}
