@@ -1,12 +1,12 @@
 import React, {FC} from 'react';
-import {
-  Text,
-  // // View,
-  // // Image,
-  // StyleSheet,
-  // // TouchableHighlight,
-  // // SafeAreaView,
-} from 'react-native';
+// import {
+//   Text,
+//   // // View,
+//   // // Image,
+//   // StyleSheet,
+//   // // TouchableHighlight,
+//   // // SafeAreaView,
+// } from 'react-native';
 import {IProductScreen} from '../models/IProductScreen';
 import {getPlatform} from '../utils/Platform';
 import {useLocation} from 'react-router';
@@ -35,7 +35,6 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   console.log(navigation);
   return (
     <>
-      <Text>SSSS</Text>
       <WebHeader />
       {/* {getPlatform() === 'web' ? (
         <Text>lll</Text>

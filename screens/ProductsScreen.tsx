@@ -31,7 +31,11 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
   return (
     <ScrollView>
       <SafeAreaView>
-        {getPlatform() == 'web' && <WebHeader />}
+        {getPlatform() === 'web' && (
+          <View>
+            <WebHeader />
+          </View>
+        )}
         <View style={styles.container}>
           {loading ? (
             <View style={styles.loaderContainer}>
