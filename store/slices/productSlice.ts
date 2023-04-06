@@ -23,11 +23,78 @@ export interface Product {
 
 interface ProductState {
   products: Product[];
+  product: Product;
   loading: boolean;
   error: boolean;
 }
 
 const initialState: ProductState = {
+  product: {
+    _id: '61f55a5762a68fe81c96d895',
+    user: '61f550d52bf7a4e12af88ee9',
+    name: 'Apple MacBook Pro 13.3 inch',
+    image: '/images/macbook.jpeg',
+    brand: 'Apple',
+    category: 'Laptops',
+    description:
+      'Apple M1 chip with 8-core CPU, 8-core GPU, 16-core Neural Engine, 8GB unified memory, 256GB SSD storage, 13-inch Retina display with True Tone, Magic Keyboard, Touch Bar and Touch ID, Force Touch trackpad, Two Thunderbolt / USB 4 ports',
+    rating: 4,
+    numReviews: 5,
+    price: 1299.99,
+    countInStock: 100,
+    reviews: [
+      {
+        name: 'John Doe',
+        rating: 4,
+        comment: 'This one is a good one.',
+        user: '61f550d52bf7a4e12af88ee9',
+        _id: '61f6d08fa8bdd68c3b1e063a',
+        createdAt: '2022-01-30T17:53:19.023Z',
+        updatedAt: '2022-01-30T17:53:19.023Z',
+      },
+      {
+        name: 'Jake Doe',
+        rating: 4,
+        comment: 'This one is a good one.',
+        user: '61f7673c4b2dce12c541eb88',
+        _id: '61f7674d4b2dce12c541eb8d',
+        createdAt: '2022-01-31T04:36:29.283Z',
+        updatedAt: '2022-01-31T04:36:29.283Z',
+      },
+      {
+        name: 'Steve Smith',
+        rating: 5,
+        comment: 'Great and powerful laptop',
+        user: '61f768334b2dce12c541eb96',
+        _id: '61f7684c4b2dce12c541eb9c',
+        createdAt: '2022-01-31T04:40:44.026Z',
+        updatedAt: '2022-01-31T04:40:44.026Z',
+      },
+      {
+        name: 'John Doe',
+        rating: 2,
+        comment: 'Not so great😏',
+        user: '61f541ad28c60fb31a63c900',
+        _id: '61f7947713b9100fafb74f60',
+        createdAt: '2022-01-31T07:49:11.429Z',
+        updatedAt: '2022-01-31T07:49:11.429Z',
+      },
+      {
+        name: 'Rich Smith',
+        rating: 5,
+        comment: 'Good',
+        user: '61f7dd8438831bef24804f18',
+        _id: '61f7ddbc38831bef24804f35',
+        createdAt: '2022-01-31T13:01:48.980Z',
+        updatedAt: '2022-01-31T13:01:48.980Z',
+      },
+    ],
+    createdAt: '2022-01-29T15:16:39.372Z',
+    updatedAt: '2022-01-31T13:01:48.981Z',
+    __v: 5,
+    altImage:
+      'https://res.cloudinary.com/dury4s2jk/image/upload/v1680417407/633c95ef27f191664914927_kyawha.jpg',
+  },
   products: [
     {
       _id: {$oid: '61f55a5762a68fe81c96d895'},
@@ -206,6 +273,17 @@ export const getProducts = createAsyncThunk('products/get', async () => {
   return response.data;
 });
 
+export const getProduct = createAsyncThunk(
+  'product/get',
+  async (id: string) => {
+    const response = await axios.get(
+      `https://tech-stop.onrender.com/api/v1/products/${id}`,
+    );
+    console.log(response.data);
+    return response.data;
+  },
+);
+
 export const ProductSlice = createSlice({
   name: 'Product',
   initialState,
@@ -232,6 +310,20 @@ export const ProductSlice = createSlice({
       state.error = false;
     });
     builder.addCase(getProducts.rejected, state => {
+      state.loading = false;
+      state.error = true;
+    });
+    builder.addCase(getProduct.fulfilled, (state, action) => {
+      console.log(action);
+      state.product = action.payload;
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(getProduct.pending, state => {
+      state.loading = true;
+      state.error = false;
+    });
+    builder.addCase(getProduct.rejected, state => {
       state.loading = false;
       state.error = true;
     });

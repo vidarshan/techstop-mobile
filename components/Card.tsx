@@ -16,7 +16,7 @@ const Card: React.FC<ICard> = ({
   navigation,
   webNavigation,
 }) => {
-  console.log(_id);
+  console.log(navigation.navigate);
   return (
     <TouchableOpacity
       style={styles.container}
