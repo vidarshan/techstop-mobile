@@ -15,10 +15,7 @@ import {useLocation} from 'react-router';
 import WebHeader from '../components/WebHeader';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {useAppDispatch, useAppSelector} from '../store/store';
-// import {getProduct} from '../store/slices/productSlice';
-// import {getProduct} from '../store/slices/productSlice';
-// import {ScrollView} from 'react-native-gesture-handler';
-// import {getPlatform} from '../utils/Platform';
+import {IoIosStar} from 'react-icons/io';
 const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   let name;
   let brand;
@@ -73,9 +70,9 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
 
   console.log(navigation);
   return (
-    <>
+    <SafeAreaView>
       {getPlatform() === 'web' ? (
-        <SafeAreaView>
+        <>
           <WebHeader />
           <ScrollView
             contentContainerStyle={styles.contentContainer}
@@ -83,112 +80,67 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
             {loading ? (
               <ActivityIndicator color="#DF2E38" size="large" />
             ) : (
-              <>
-                <View style={styles.imgContainer}>
-                  <Image style={styles.img} source={{uri: image}} />
-                  <Text style={styles.brand}>{brand}</Text>
-                  <Text style={styles.name}>{name}</Text>
-                  <View style={styles.priceContainer}>
-                    <Text style={styles.price}>${price}</Text>
-                  </View>
-                  <View style={styles.inStockContainer}>
-                    <Text style={styles.inStock}>
-                      {countInStock === '0'
-                        ? 'None Available'
-                        : `${countInStock} Available`}
-                    </Text>
-                  </View>
-                </View>
-                {description?.split(', ').map((item: string) => {
-                  return (
-                    <View style={styles.descriptionContainer}>
-                      <Text style={styles.description}>{item}</Text>
-                    </View>
-                  );
-                })}
-                <TouchableHighlight style={styles.addToCart}>
-                  <Text style={styles.addToCartText}>Add to Cart</Text>
-                </TouchableHighlight>
-                <Text>Ratings and Reviews</Text>
-                <Text style={styles.rating}>
-                  {rating}⭐️⭐️⭐️⭐️⭐️{numReviews}
-                </Text>
-                {reviews && reviews.length ? (
-                  reviews.map((review: any) => {
-                    return (
-                      <View style={styles.commentCard}>
-                        <Text style={styles.commentName}>{review.name}</Text>
-                        <Text style={styles.commentContent}>
-                          {review.comment}
-                        </Text>
-                      </View>
-                    );
-                  })
-                ) : (
-                  <Text style={styles.commentContent}>No comments</Text>
-                )}
-                <Icon name="star" size={30} color="#900" />
-                <Text>{numReviews}</Text>
-                <Text>{price}</Text>
-                <Text>{countInStock}</Text>
-              </>
+              <></>
             )}
           </ScrollView>
-        </SafeAreaView>
+        </>
       ) : (
-        <SafeAreaView>
-          <ScrollView
-            contentContainerStyle={styles.contentContainer}
-            style={styles.container}>
-            <View style={styles.imgContainer}>
-              <Image style={styles.img} source={{uri: image}} />
-              <Text style={styles.brand}>{brand}</Text>
-              <Text style={styles.name}>{name}</Text>
-              <View style={styles.priceContainer}>
-                <Text style={styles.price}>${price}</Text>
-              </View>
-              <View style={styles.inStockContainer}>
-                <Text style={styles.inStock}>
-                  {countInStock === '0'
-                    ? 'None Available'
-                    : `${countInStock} Available`}
-                </Text>
-              </View>
-            </View>
-            {description?.split(', ').map((item: string) => {
-              return (
-                <View style={styles.descriptionContainer}>
-                  <Text style={styles.description}>{item}</Text>
-                </View>
-              );
-            })}
-            <TouchableHighlight style={styles.addToCart}>
-              <Text style={styles.addToCartText}>Add to Cart</Text>
-            </TouchableHighlight>
-            <Text>Ratings and Reviews</Text>
-            <Text style={styles.rating}>
-              {rating}⭐️⭐️⭐️⭐️⭐️{numReviews}
-            </Text>
-            {reviews && reviews.length ? (
-              reviews.map((review: any) => {
-                return (
-                  <View style={styles.commentCard}>
-                    <Text style={styles.commentName}>{review.name}</Text>
-                    <Text style={styles.commentContent}>{review.comment}</Text>
-                  </View>
-                );
-              })
-            ) : (
-              <Text style={styles.commentContent}>No comments</Text>
-            )}
-            <Icon name="star" size={30} color="#900" />
-            <Text>{numReviews}</Text>
-            <Text>{price}</Text>
-            <Text>{countInStock}</Text>
-          </ScrollView>
-        </SafeAreaView>
+        <></>
       )}
-    </>
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+        style={styles.container}>
+        <View style={styles.imgContainer}>
+          <Image style={styles.img} source={{uri: image}} />
+          <Text style={styles.brand}>{brand}</Text>
+          <Text style={styles.name}>{name}</Text>
+          <View style={styles.priceContainer}>
+            <Text style={styles.price}>${price}</Text>
+          </View>
+          <View style={styles.inStockContainer}>
+            <Text style={styles.inStock}>
+              {countInStock === '0'
+                ? 'None Available'
+                : `${countInStock} Available`}
+            </Text>
+          </View>
+        </View>
+        {description?.split(', ').map((item: string) => {
+          return (
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.description}>{item}</Text>
+            </View>
+          );
+        })}
+        <TouchableHighlight style={styles.addToCart}>
+          <Text style={styles.addToCartText}>Add to Cart</Text>
+        </TouchableHighlight>
+        <Text>Ratings and Reviews</Text>
+        <View style={styles.reviewContainer}>
+          {getPlatform() === 'web' ? (
+            <IoIosStar color="orange" size={20} />
+          ) : (
+            <Icon name="star" size={30} color="#f37900" />
+          )}
+          <View style={styles.reviewRow}>
+            <Text style={styles.ratingText}>{parseInt(rating).toFixed(1)}</Text>
+            <Text>{numReviews} reviews</Text>
+          </View>
+        </View>
+        {reviews && reviews.length ? (
+          reviews.map((review: any) => {
+            return (
+              <View style={styles.commentCard}>
+                <Text style={styles.commentName}>{review.name}</Text>
+                <Text style={styles.commentContent}>{review.comment}</Text>
+              </View>
+            );
+          })
+        ) : (
+          <Text style={styles.commentContent}>No comments</Text>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -289,6 +241,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: 'italic',
     marginTop: 10,
+  },
+  reviewContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  reviewRow: {
+    marginLeft: 10,
+  },
+  ratingText: {
+    fontSize: 24,
   },
 });
 
