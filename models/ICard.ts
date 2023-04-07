@@ -12,4 +12,5 @@ export interface ICard {
   altImage: string;
   navigation?: any;
   webNavigation?: any;
+  location?: any;
 }

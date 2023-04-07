@@ -15,8 +15,8 @@ const Card: React.FC<ICard> = ({
   altImage,
   navigation,
   webNavigation,
+  location,
 }) => {
-  console.log(navigation.navigate);
   return (
     <TouchableOpacity
       style={styles.container}
@@ -33,6 +33,7 @@ const Card: React.FC<ICard> = ({
               price,
               countInStock,
               reviews,
+              location,
             });
       }}>
       <Image

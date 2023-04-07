@@ -13,12 +13,18 @@ import {IProductsScreen} from '../models/IProductsScreen';
 import {getPlatform} from '../utils/Platform';
 import {useNavigate} from 'react-router-dom';
 import WebHeader from '../components/WebHeader';
+import {useLocation} from 'react-router-dom';
 
 const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
   let webNavigation = {};
+  let location = {};
+  if (getPlatform() === 'web') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    location = useLocation();
+  }
+
   const dispatch = useAppDispatch();
   if (getPlatform() === 'web') {
-    //disabled check to ensure that this doesnt get initialized on mobile OS.
     // eslint-disable-next-line react-hooks/rules-of-hooks
     webNavigation = useNavigate();
   }
@@ -60,6 +66,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
                     reviews={product.reviews}
                     navigation={navigation}
                     webNavigation={webNavigation}
+                    location={location}
                   />
                 );
               })}

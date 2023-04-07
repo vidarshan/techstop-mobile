@@ -16,6 +16,7 @@ import WebHeader from '../components/WebHeader';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {IoIosStar} from 'react-icons/io';
+import {getProduct} from '../store/slices/productSlice';
 const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   let name;
   let brand;
@@ -26,11 +27,9 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   let countInStock;
   let reviews;
   let image;
+  let id;
   const dispatch = useAppDispatch();
   const {product, loading} = useAppSelector(state => state.products);
-  console.log(loading);
-  console.log(product);
-  console.log(dispatch);
   if (getPlatform() === 'web') {
     let params: any = {};
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -46,6 +45,7 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
     reviews = product.reviews;
     image = product.altImage;
     countInStock = product.countInStock;
+    id = location.pathname.split('/product/')[1];
   } else {
     name = route.params.name;
     brand = route.params.brand;
@@ -61,85 +61,73 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
 
   useEffect(() => {
     if (getPlatform() === 'web') {
-      // dispatch(getProduct('61f55a5762a68fe81c96d895'));
+      dispatch(getProduct(id));
     }
-    console.log(product);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [dispatch, id]);
 
   console.log(navigation);
   return (
     <SafeAreaView>
-      {getPlatform() === 'web' ? (
-        <>
-          <WebHeader />
-          <ScrollView
-            contentContainerStyle={styles.contentContainer}
-            style={styles.container}>
-            {loading ? (
-              <ActivityIndicator color="#DF2E38" size="large" />
-            ) : (
-              <></>
-            )}
-          </ScrollView>
-        </>
+      {getPlatform() === 'web' && <WebHeader rightPath="/" back />}
+      {loading ? (
+        <ActivityIndicator color="#DF2E38" size="large" />
       ) : (
-        <></>
-      )}
-      <ScrollView
-        contentContainerStyle={styles.contentContainer}
-        style={styles.container}>
-        <View style={styles.imgContainer}>
-          <Image style={styles.img} source={{uri: image}} />
-          <Text style={styles.brand}>{brand}</Text>
-          <Text style={styles.name}>{name}</Text>
-          <View style={styles.priceContainer}>
-            <Text style={styles.price}>${price}</Text>
-          </View>
-          <View style={styles.inStockContainer}>
-            <Text style={styles.inStock}>
-              {countInStock === '0'
-                ? 'None Available'
-                : `${countInStock} Available`}
-            </Text>
-          </View>
-        </View>
-        {description?.split(', ').map((item: string) => {
-          return (
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.description}>{item}</Text>
+        <ScrollView
+          contentContainerStyle={styles.contentContainer}
+          style={styles.container}>
+          <View style={styles.imgContainer}>
+            <Image style={styles.img} source={{uri: image}} />
+            <Text style={styles.brand}>{brand}</Text>
+            <Text style={styles.name}>{name}</Text>
+            <View style={styles.priceContainer}>
+              <Text style={styles.price}>${price}</Text>
             </View>
-          );
-        })}
-        <TouchableHighlight style={styles.addToCart}>
-          <Text style={styles.addToCartText}>Add to Cart</Text>
-        </TouchableHighlight>
-        <Text>Ratings and Reviews</Text>
-        <View style={styles.reviewContainer}>
-          {getPlatform() === 'web' ? (
-            <IoIosStar color="orange" size={20} />
-          ) : (
-            <Icon name="star" size={30} color="#f37900" />
-          )}
-          <View style={styles.reviewRow}>
-            <Text style={styles.ratingText}>{parseInt(rating).toFixed(1)}</Text>
-            <Text>{numReviews} reviews</Text>
+            <View style={styles.inStockContainer}>
+              <Text style={styles.inStock}>
+                {countInStock === '0'
+                  ? 'None Available'
+                  : `${countInStock} Available`}
+              </Text>
+            </View>
           </View>
-        </View>
-        {reviews && reviews.length ? (
-          reviews.map((review: any) => {
+          {description?.split(', ').map((item: string) => {
             return (
-              <View style={styles.commentCard}>
-                <Text style={styles.commentName}>{review.name}</Text>
-                <Text style={styles.commentContent}>{review.comment}</Text>
+              <View style={styles.descriptionContainer}>
+                <Text style={styles.description}>{item}</Text>
               </View>
             );
-          })
-        ) : (
-          <Text style={styles.commentContent}>No comments</Text>
-        )}
-      </ScrollView>
+          })}
+          <TouchableHighlight style={styles.addToCart}>
+            <Text style={styles.addToCartText}>Add to Cart</Text>
+          </TouchableHighlight>
+          <Text>Ratings and Reviews</Text>
+          <View style={styles.reviewContainer}>
+            {getPlatform() === 'web' ? (
+              <IoIosStar color="orange" size={20} />
+            ) : (
+              <Icon name="star" size={30} color="#f37900" />
+            )}
+            <View style={styles.reviewRow}>
+              <Text style={styles.ratingText}>
+                {parseInt(rating).toFixed(1)}
+              </Text>
+              <Text>{numReviews} reviews</Text>
+            </View>
+          </View>
+          {reviews && reviews.length ? (
+            reviews.map((review: any) => {
+              return (
+                <View style={styles.commentCard}>
+                  <Text style={styles.commentName}>{review.name}</Text>
+                  <Text style={styles.commentContent}>{review.comment}</Text>
+                </View>
+              );
+            })
+          ) : (
+            <Text style={styles.commentContent}>No comments</Text>
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
