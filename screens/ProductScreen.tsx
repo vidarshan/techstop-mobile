@@ -111,7 +111,7 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
             )}
             <View style={styles.reviewRow}>
               <Text style={styles.ratingText}>
-                {parseInt(rating).toFixed(1)}
+                {parseInt(rating, 10).toFixed(1)}
               </Text>
               <Text>{numReviews} reviews</Text>
             </View>

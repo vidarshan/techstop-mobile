@@ -12,9 +12,11 @@ import {navigationRef} from './RootNavigation';
 import * as RootNavigation from './RootNavigation';
 import CartScreen from './screens/CartScreen';
 import OrderScreen from './screens/OrderScreen';
+import LoginScreen from './screens/LoginScreen';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
+  let auth = null;
   return (
     <Provider store={store}>
       <NavigationContainer ref={navigationRef}>
@@ -23,22 +25,34 @@ const App = () => {
             headerTintColor: '#2e2525',
             headerStyle: {backgroundColor: '#DF2E38'},
           }}>
-          <Stack.Screen
-            name="Home"
-            component={ProductsScreen}
-            options={{
-              headerTitle: 'Products',
-              headerRight: () => (
-                <TouchableOpacity
-                  onPress={() => RootNavigation.navigate('Cart', {})}>
-                  <Icon name="shopping-bag" size={16} color="#fff" />
-                </TouchableOpacity>
-              ),
-            }}
-          />
-          <Stack.Screen name="Product" component={ProductScreen} />
-          <Stack.Screen name="Cart" component={CartScreen} />
-          <Stack.Screen name="Order" component={OrderScreen} />
+          {auth !== null ? (
+            <>
+              <Stack.Screen
+                name="Home"
+                component={ProductsScreen}
+                options={{
+                  headerTitle: 'Products',
+                  headerRight: () => (
+                    <TouchableOpacity
+                      onPress={() => RootNavigation.navigate('Cart', {})}>
+                      <Icon name="shopping-bag" size={16} color="#fff" />
+                    </TouchableOpacity>
+                  ),
+                }}
+              />
+              <Stack.Screen name="Product" component={ProductScreen} />
+              <Stack.Screen name="Cart" component={CartScreen} />
+              <Stack.Screen name="Order" component={OrderScreen} />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                options={{headerShown: false}}
+                name="Login"
+                component={LoginScreen}
+              />
+            </>
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
