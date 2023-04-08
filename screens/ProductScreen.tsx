@@ -68,7 +68,9 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   console.log(navigation);
   return (
     <SafeAreaView>
-      {getPlatform() === 'web' && <WebHeader rightPath="/" back />}
+      {getPlatform() === 'web' && (
+        <WebHeader header="Products" rightPath="/" back />
+      )}
       {loading ? (
         <ActivityIndicator color="#DF2E38" size="large" />
       ) : (

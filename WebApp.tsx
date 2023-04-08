@@ -11,6 +11,7 @@ import {TouchableOpacity} from 'react-native';
 import {navigationRef} from './RootNavigation';
 import * as RootNavigation from './RootNavigation';
 import CartScreen from './screens/CartScreen';
+import OrderScreen from './screens/OrderScreen';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
@@ -37,6 +38,7 @@ const App = () => {
           />
           <Stack.Screen name="Product" component={ProductScreen} />
           <Stack.Screen name="Cart" component={CartScreen} />
+          <Stack.Screen name="Order" component={OrderScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

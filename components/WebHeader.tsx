@@ -5,7 +5,13 @@ import {IWebHeader} from '../models/IWebHeader';
 import {useNavigate} from 'react-router-dom';
 import {IoBagHandle} from 'react-icons/io5';
 
-const WebHeader: FC<IWebHeader> = ({back, leftPath = '/'}) => {
+const WebHeader: FC<IWebHeader> = ({
+  header = '',
+  backHeader = '',
+  back,
+  leftPath = '/',
+  rightPath = '/',
+}) => {
   const navigate = useNavigate();
   return (
     <>
@@ -16,7 +22,7 @@ const WebHeader: FC<IWebHeader> = ({back, leftPath = '/'}) => {
           <View style={styles.webHeaderIcon}>
             <IoIosArrowBack size={18} color="#fff" />
           </View>
-          <Text style={styles.webHeaderText}>Products</Text>
+          <Text style={styles.webHeaderText}>{header}</Text>
         </TouchableOpacity>
       ) : (
         <View style={styles.webHeaderCenter}>
@@ -26,8 +32,10 @@ const WebHeader: FC<IWebHeader> = ({back, leftPath = '/'}) => {
             <TouchableOpacity />
           )}
 
-          <Text style={styles.webHeaderText}>Products</Text>
-          <IoBagHandle size={18} color="#fff" />
+          <Text style={styles.webHeaderText}>{backHeader}</Text>
+          <TouchableOpacity onPress={() => navigate(rightPath)}>
+            <IoBagHandle size={18} color="#fff" />
+          </TouchableOpacity>
         </View>
       )}
     </>

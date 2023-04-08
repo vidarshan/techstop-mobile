@@ -2,6 +2,8 @@ import React, {FC} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {ICartItem} from '../models/ICartItem';
+import {IoTrash} from 'react-icons/io5';
+import {getPlatform} from '../utils/Platform';
 
 const CartItem: FC<ICartItem> = ({item}) => {
   console.log(item);
@@ -21,7 +23,11 @@ const CartItem: FC<ICartItem> = ({item}) => {
           <Text style={styles.itemName}>CartItem</Text>
           <Text>1 Nos.</Text>
         </View>
-        <Icon name="trash" size={20} color="#DF2E38" />
+        {getPlatform() === 'web' ? (
+          <IoTrash size={20} color="#DF2E38" />
+        ) : (
+          <Icon name="trash" size={20} color="#DF2E38" />
+        )}
       </View>
     </TouchableOpacity>
   );

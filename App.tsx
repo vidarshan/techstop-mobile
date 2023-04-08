@@ -4,6 +4,8 @@ import {store} from './store/store';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import ProductsScreen from './screens/ProductsScreen';
 import ProductScreen from './screens/ProductScreen';
+import CartScreen from './screens/CartScreen';
+import OrderScreen from './screens/OrderScreen';
 
 const App = () => {
   return (
@@ -12,6 +14,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<ProductsScreen navigation={{}} />} />
           <Route path="/product/:id" element={<ProductScreen />} />
+          <Route path="/cart" element={<CartScreen />} />
+          <Route path="/orders" element={<OrderScreen />} />
         </Routes>
       </Router>
     </Provider>
