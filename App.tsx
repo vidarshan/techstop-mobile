@@ -6,7 +6,6 @@ import ProductsScreen from './screens/ProductsScreen';
 import ProductScreen from './screens/ProductScreen';
 
 const App = () => {
-  console.log('dd');
   return (
     <Provider store={store}>
       <Router>

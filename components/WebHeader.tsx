@@ -3,7 +3,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {IoIosArrowBack} from 'react-icons/io';
 import {IWebHeader} from '../models/IWebHeader';
 import {useNavigate} from 'react-router-dom';
-// import Icon from 'react-native-vector-icons/FontAwesome';
+import {IoBagHandle} from 'react-icons/io5';
 
 const WebHeader: FC<IWebHeader> = ({back, leftPath = '/'}) => {
   const navigate = useNavigate();
@@ -20,7 +20,14 @@ const WebHeader: FC<IWebHeader> = ({back, leftPath = '/'}) => {
         </TouchableOpacity>
       ) : (
         <View style={styles.webHeaderCenter}>
+          {!leftPath ? (
+            <IoBagHandle size={18} color="#fff" />
+          ) : (
+            <TouchableOpacity />
+          )}
+
           <Text style={styles.webHeaderText}>Products</Text>
+          <IoBagHandle size={18} color="#fff" />
         </View>
       )}
     </>
@@ -39,7 +46,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#DF2E38',
     padding: 20,
   },
