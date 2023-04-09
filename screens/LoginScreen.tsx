@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,8 +8,16 @@ import {
   View,
 } from 'react-native';
 import {getPlatform} from '../utils/Platform';
+import {ILoginScreen} from '../models/ILoginScreen';
+import {useNavigate} from 'react-router';
 
-const LoginScreen = () => {
+const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
+  let webNavigation: any = {};
+
+  if (getPlatform() === 'web') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    webNavigation = useNavigate();
+  }
   return (
     <SafeAreaView style={styles.authContainer}>
       <View
@@ -22,7 +30,13 @@ const LoginScreen = () => {
         <TouchableOpacity style={styles.authButton}>
           <Text style={styles.authText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.authInvertedButton}>
+        <TouchableOpacity
+          style={styles.authInvertedButton}
+          onPress={() => {
+            getPlatform() === 'web'
+              ? webNavigation('/register')
+              : navigation.navigate('Register');
+          }}>
           <Text style={styles.authInvertedButtonText}>New User?</Text>
         </TouchableOpacity>
       </View>

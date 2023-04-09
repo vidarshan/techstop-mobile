@@ -8,13 +8,15 @@ import CartScreen from './screens/CartScreen';
 import OrderScreen from './screens/OrderScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import UserScreen from './screens/UserScreen';
 
 const App = () => {
   return (
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path="/" element={<LoginScreen />} />
+          <Route path="/" element={<UserScreen />} />
+          <Route path="/login" element={<LoginScreen />} />
           <Route path="/register" element={<RegisterScreen />} />
           <Route
             path="/products"

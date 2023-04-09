@@ -13,10 +13,12 @@ import * as RootNavigation from './RootNavigation';
 import CartScreen from './screens/CartScreen';
 import OrderScreen from './screens/OrderScreen';
 import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import UserScreen from './screens/UserScreen';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
-  let auth = null;
+  let auth = true;
   return (
     <Provider store={store}>
       <NavigationContainer ref={navigationRef}>
@@ -32,6 +34,12 @@ const App = () => {
                 component={ProductsScreen}
                 options={{
                   headerTitle: 'Products',
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => RootNavigation.navigate('User', {})}>
+                      <Icon name="user-alt" size={16} color="#fff" />
+                    </TouchableOpacity>
+                  ),
                   headerRight: () => (
                     <TouchableOpacity
                       onPress={() => RootNavigation.navigate('Cart', {})}>
@@ -43,6 +51,7 @@ const App = () => {
               <Stack.Screen name="Product" component={ProductScreen} />
               <Stack.Screen name="Cart" component={CartScreen} />
               <Stack.Screen name="Order" component={OrderScreen} />
+              <Stack.Screen name="User" component={UserScreen} />
             </>
           ) : (
             <>
@@ -50,6 +59,11 @@ const App = () => {
                 options={{headerShown: false}}
                 name="Login"
                 component={LoginScreen}
+              />
+              <Stack.Screen
+                options={{headerShown: false}}
+                name="Register"
+                component={RegisterScreen}
               />
             </>
           )}
