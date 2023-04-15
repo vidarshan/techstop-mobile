@@ -10,8 +10,11 @@ import {
 import {getPlatform} from '../utils/Platform';
 import WebHeader from '../components/WebHeader';
 import OrderCard from '../components/OrderCard';
+import {useAppDispatch} from '../store/store';
+import {removeUserFromAsyncStorage} from '../store/slices/userSlice';
 
 const UserScreen = () => {
+  const dispatch = useAppDispatch();
   const DATA = [
     {
       shippingAddress: {
@@ -256,7 +259,9 @@ const UserScreen = () => {
           <TouchableOpacity style={styles.avatar} />
           <Text style={styles.username}>John Doe</Text>
         </View>
-        <TouchableOpacity style={styles.logout}>
+        <TouchableOpacity
+          style={styles.logout}
+          onPress={() => dispatch(removeUserFromAsyncStorage())}>
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>

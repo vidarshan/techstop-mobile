@@ -1,5 +1,6 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -10,14 +11,57 @@ import {
 import {getPlatform} from '../utils/Platform';
 import {ILoginScreen} from '../models/ILoginScreen';
 import {useNavigate} from 'react-router';
+import {useAppDispatch, useAppSelector} from '../store/store';
+import {
+  authUser,
+  getUserFromAsyncStorage,
+  setUserToAsyncStorage,
+} from '../store/slices/userSlice';
+// import {nativeGetMyObject} from '../utils/Storage';
 
 const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
   let webNavigation: any = {};
+  const dispatch = useAppDispatch();
+  const {loading, error, user} = useAppSelector(state => state.user);
+  const [email, setEmail] = useState('john@gmail.com');
+  const [password, setPassword] = useState('123456');
 
   if (getPlatform() === 'web') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     webNavigation = useNavigate();
+    console.log(webNavigation);
   }
+
+  const login = () => {
+    dispatch(authUser({email, password}));
+    if (!error) {
+      console.log('user', user);
+      dispatch(
+        setUserToAsyncStorage({
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+          token: user.token,
+        }),
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (getPlatform() !== 'web') {
+      dispatch(getUserFromAsyncStorage());
+      if (user.token !== null) {
+        console.log(navigation);
+        navigation.navigate('Home', {});
+      }
+    }
+    console.log('ddd');
+  }, [dispatch, navigation, user]);
+
+  useEffect(() => {
+    console.log('dddd');
+  }, []);
+
   return (
     <SafeAreaView style={styles.authContainer}>
       <View
@@ -25,17 +69,36 @@ const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
           getPlatform() === 'web' ? styles.authScreenWeb : styles.authScreen
         }>
         <Text style={styles.authHeaderText}>Login to your account</Text>
-        <TextInput style={styles.authInput} placeholder="Your Email" />
-        <TextInput style={styles.authInput} placeholder="Your Password" />
-        <TouchableOpacity style={styles.authButton}>
-          <Text style={styles.authText}>Login</Text>
+        <TextInput
+          editable={!loading}
+          value={email}
+          style={styles.authInput}
+          placeholder="Your Email"
+          onChangeText={text => setEmail(text)}
+        />
+        <TextInput
+          editable={!loading}
+          value={password}
+          style={styles.authInput}
+          placeholder="Your Password"
+          onChangeText={text => setPassword(text)}
+          secureTextEntry={true}
+        />
+        {console.log(loading)}
+        <TouchableOpacity style={styles.authButton} onPress={() => login()}>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.authText}>Login</Text>
+          )}
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.authInvertedButton}
           onPress={() => {
-            getPlatform() === 'web'
-              ? webNavigation('/register')
-              : navigation.navigate('Register');
+            console.log(dispatch(getUserFromAsyncStorage()));
+            // getPlatform() === 'web'
+            //   ? webNavigation('/register')
+            //   : navigation.navigate('Register');
           }}>
           <Text style={styles.authInvertedButtonText}>New User?</Text>
         </TouchableOpacity>

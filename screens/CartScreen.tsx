@@ -47,7 +47,7 @@ const CartScreen: FC<ICartScreen> = ({navigation}) => {
           <ScrollView contentContainerStyle={styles.emptyContentContainer}>
             <View style={styles.emptyContainer}>
               <Image
-                style={{width: 50, height: 50}}
+                style={styles.emptyImage}
                 source={{
                   uri: 'https://res.cloudinary.com/dury4s2jk/image/upload/v1680938626/smirk_sx0swu.png',
                 }}
@@ -127,6 +127,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
+  },
+  emptyImg: {
+    width: 50,
+    height: 50,
   },
 });
 

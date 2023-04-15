@@ -15,13 +15,10 @@ const App = () => {
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path="/" element={<UserScreen />} />
-          <Route path="/login" element={<LoginScreen />} />
+          <Route path="/user" element={<UserScreen />} />
+          <Route path="/" element={<LoginScreen />} />
           <Route path="/register" element={<RegisterScreen />} />
-          <Route
-            path="/products"
-            element={<ProductsScreen navigation={{}} />}
-          />
+          <Route path="/" element={<ProductsScreen navigation={{}} />} />
           <Route path="/product/:id" element={<ProductScreen />} />
           <Route path="/cart" element={<CartScreen />} />
           <Route path="/orders" element={<OrderScreen />} />
