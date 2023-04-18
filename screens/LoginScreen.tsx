@@ -22,7 +22,7 @@ import {
 const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
   let webNavigation: any = {};
   const dispatch = useAppDispatch();
-  const {loading, error, user} = useAppSelector(state => state.user);
+  const {loginLoading, error, user} = useAppSelector(state => state.user);
   const [email, setEmail] = useState('john@gmail.com');
   const [password, setPassword] = useState('123456');
 
@@ -55,12 +55,7 @@ const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
         navigation.navigate('Home', {});
       }
     }
-    console.log('ddd');
   }, [dispatch, navigation, user]);
-
-  useEffect(() => {
-    console.log('dddd');
-  }, []);
 
   return (
     <SafeAreaView style={styles.authContainer}>
@@ -70,23 +65,20 @@ const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
         }>
         <Text style={styles.authHeaderText}>Login to your account</Text>
         <TextInput
-          editable={!loading}
           value={email}
           style={styles.authInput}
           placeholder="Your Email"
           onChangeText={text => setEmail(text)}
         />
         <TextInput
-          editable={!loading}
           value={password}
           style={styles.authInput}
           placeholder="Your Password"
           onChangeText={text => setPassword(text)}
           secureTextEntry={true}
         />
-        {console.log(loading)}
         <TouchableOpacity style={styles.authButton} onPress={() => login()}>
-          {loading ? (
+          {loginLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <Text style={styles.authText}>Login</Text>

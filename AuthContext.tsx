@@ -25,7 +25,7 @@ export default function AppAuthContext() {
   const Stack = createNativeStackNavigator();
 
   React.useEffect(() => {
-    const bootstrapAsync = async () => {
+    const bootstrapAsync = () => {
       try {
         dispatch(getUserFromAsyncStorage());
       } catch (e) {}

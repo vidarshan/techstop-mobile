@@ -12,6 +12,7 @@ export interface User {
 interface AuthState {
   user: User;
   loading: boolean;
+  loginLoading: boolean;
   error: boolean;
 }
 
@@ -22,6 +23,7 @@ const initialState: AuthState = {
     email: '',
     token: null,
   },
+  loginLoading: false,
   loading: false,
   error: false,
 };
@@ -70,15 +72,15 @@ export const UserSlice = createSlice({
       state.user.token = action.payload.token;
       state.user.email = action.payload.email;
       state.user.name = action.payload.name;
-      state.loading = false;
+      state.loginLoading = false;
       state.error = false;
     });
     builder.addCase(authUser.pending, state => {
-      state.loading = true;
+      state.loginLoading = true;
       state.error = false;
     });
     builder.addCase(authUser.rejected, state => {
-      state.loading = false;
+      state.loginLoading = false;
       state.error = true;
     });
     builder.addCase(setUserToAsyncStorage.fulfilled, state => {
@@ -94,12 +96,16 @@ export const UserSlice = createSlice({
       state.error = false;
     });
     builder.addCase(getUserFromAsyncStorage.fulfilled, (state, action) => {
-      state.user._id = action.payload._id;
-      state.user.token = action.payload.token;
-      state.user.email = action.payload.email;
-      state.user.name = action.payload.name;
-      state.loading = false;
-      state.error = false;
+      if (action.payload === null) {
+        state.loading = true;
+      } else {
+        state.user._id = action.payload._id;
+        state.user.token = action.payload.token;
+        state.user.email = action.payload.email;
+        state.user.name = action.payload.name;
+        state.loading = false;
+        state.error = false;
+      }
     });
     builder.addCase(getUserFromAsyncStorage.pending, state => {
       state.loading = true;
