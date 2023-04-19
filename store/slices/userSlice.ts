@@ -13,6 +13,7 @@ interface AuthState {
   user: User;
   loading: boolean;
   loginLoading: boolean;
+  registerLoading: boolean;
   error: boolean;
 }
 
@@ -24,6 +25,7 @@ const initialState: AuthState = {
     token: null,
   },
   loginLoading: false,
+  registerLoading: false,
   loading: false,
   error: false,
 };
@@ -38,6 +40,22 @@ export const authUser = createAsyncThunk('user/login', async (data: any) => {
   );
   return response.data;
 });
+
+export const registerUser = createAsyncThunk(
+  'user/register',
+  async (data: any) => {
+    const response = await axios.post(
+      'https://tech-stop.onrender.com/api/v1/users',
+      {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      },
+    );
+    console.log(response);
+    return response.data;
+  },
+);
 
 export const setUserToAsyncStorage = createAsyncThunk(
   'user/setUserToAsyncStorage',
@@ -81,6 +99,24 @@ export const UserSlice = createSlice({
     });
     builder.addCase(authUser.rejected, state => {
       state.loginLoading = false;
+      state.error = true;
+    });
+    builder.addCase(registerUser.fulfilled, (state, action) => {
+      console.log(action.payload);
+      state.user._id = action.payload._id;
+      state.user.token = action.payload.token;
+      state.user.email = action.payload.email;
+      state.user.name = action.payload.name;
+      state.registerLoading = false;
+      state.error = false;
+    });
+    builder.addCase(registerUser.pending, state => {
+      state.registerLoading = true;
+      state.error = false;
+    });
+    builder.addCase(registerUser.rejected, (state, action) => {
+      console.log('ac', action);
+      state.registerLoading = false;
       state.error = true;
     });
     builder.addCase(setUserToAsyncStorage.fulfilled, state => {

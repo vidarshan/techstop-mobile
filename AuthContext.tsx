@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {
   authUser,
   getUserFromAsyncStorage,
+  // registerUser,
   removeUserFromAsyncStorage,
 } from './store/slices/userSlice';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -39,6 +40,9 @@ export default function AppAuthContext() {
       login: async data => {
         dispatch(authUser(data));
       },
+      // register: async data => {
+      //   dispatch(registerUser(data));
+      // },
       logout: () => {
         dispatch(removeUserFromAsyncStorage());
       },
@@ -58,10 +62,14 @@ export default function AppAuthContext() {
             <>
               <Stack.Screen
                 options={{headerShown: false}}
-                name="Login"
+                name="SignUp"
+                component={RegisterScreen}
+              />
+              <Stack.Screen
+                options={{headerShown: false}}
+                name="SignIn"
                 component={LoginScreen}
               />
-              <Stack.Screen name="SignIn" component={RegisterScreen} />
             </>
           ) : (
             <>

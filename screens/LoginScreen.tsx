@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -12,11 +12,7 @@ import {getPlatform} from '../utils/Platform';
 import {ILoginScreen} from '../models/ILoginScreen';
 import {useNavigate} from 'react-router';
 import {useAppDispatch, useAppSelector} from '../store/store';
-import {
-  authUser,
-  getUserFromAsyncStorage,
-  setUserToAsyncStorage,
-} from '../store/slices/userSlice';
+import {authUser, setUserToAsyncStorage} from '../store/slices/userSlice';
 // import {nativeGetMyObject} from '../utils/Storage';
 
 const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
@@ -47,15 +43,15 @@ const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
     }
   };
 
-  useEffect(() => {
-    if (getPlatform() !== 'web') {
-      dispatch(getUserFromAsyncStorage());
-      if (user.token !== null) {
-        console.log(navigation);
-        navigation.navigate('Home', {});
-      }
-    }
-  }, [dispatch, navigation, user]);
+  // useEffect(() => {
+  //   if (getPlatform() !== 'web') {
+  //     dispatch(getUserFromAsyncStorage());
+  //     if (user.token !== null) {
+  //       console.log(navigation);
+  //       navigation.navigate('Home', {});
+  //     }
+  //   }
+  // }, [dispatch, navigation, user]);
 
   return (
     <SafeAreaView style={styles.authContainer}>
@@ -87,10 +83,9 @@ const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
         <TouchableOpacity
           style={styles.authInvertedButton}
           onPress={() => {
-            console.log(dispatch(getUserFromAsyncStorage()));
-            // getPlatform() === 'web'
-            //   ? webNavigation('/register')
-            //   : navigation.navigate('Register');
+            getPlatform() === 'web'
+              ? webNavigation('/register')
+              : navigation.navigate('SignUp');
           }}>
           <Text style={styles.authInvertedButtonText}>New User?</Text>
         </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -10,14 +10,33 @@ import {
 import {getPlatform} from '../utils/Platform';
 import {IRegisterScreen} from '../models/IRegisterScreen';
 import {useNavigate} from 'react-router';
+import {useAppDispatch, useAppSelector} from '../store/store';
+import {registerUser, setUserToAsyncStorage} from '../store/slices/userSlice';
 
 const RegisterScreen: FC<IRegisterScreen> = ({navigation}) => {
   let webNavigation: any = {};
+  const dispatch = useAppDispatch();
+  const [name, setName] = useState('Gates');
+  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('gates@3gmail.com');
+  const {user} = useAppSelector(state => state.user);
 
   if (getPlatform() === 'web') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     webNavigation = useNavigate();
   }
+
+  const register = () => {
+    dispatch(registerUser({name, email, password}));
+    dispatch(
+      setUserToAsyncStorage({
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        token: user.token,
+      }),
+    );
+  };
 
   return (
     <SafeAreaView style={styles.authContainer}>
@@ -26,10 +45,25 @@ const RegisterScreen: FC<IRegisterScreen> = ({navigation}) => {
           getPlatform() === 'web' ? styles.authScreenWeb : styles.authScreen
         }>
         <Text style={styles.authHeaderText}>Create your account</Text>
-        <TextInput style={styles.authInput} placeholder="Your Name" />
-        <TextInput style={styles.authInput} placeholder="Your Email" />
-        <TextInput style={styles.authInput} placeholder="Your Password" />
-        <TouchableOpacity style={styles.authButton}>
+        <TextInput
+          value={name}
+          style={styles.authInput}
+          placeholder="Your Name"
+          onChangeText={text => setName(text)}
+        />
+        <TextInput
+          value={email}
+          style={styles.authInput}
+          placeholder="Your Email"
+          onChangeText={text => setEmail(text)}
+        />
+        <TextInput
+          value={password}
+          style={styles.authInput}
+          placeholder="Your Password"
+          onChangeText={text => setPassword(text)}
+        />
+        <TouchableOpacity style={styles.authButton} onPress={() => register()}>
           <Text style={styles.authText}>Register</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -37,7 +71,7 @@ const RegisterScreen: FC<IRegisterScreen> = ({navigation}) => {
           onPress={() => {
             getPlatform() === 'web'
               ? webNavigation('/login')
-              : navigation.navigate('Login');
+              : navigation.navigate('SignIn');
           }}>
           <Text style={styles.authInvertedButtonText}>Current User?</Text>
         </TouchableOpacity>
