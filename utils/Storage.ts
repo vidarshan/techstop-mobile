@@ -33,3 +33,20 @@ export const nativeGetMyObject = async () => {
     console.log(e);
   }
 };
+
+export const webSetToLocalStorage = async value => {
+  try {
+    localStorage.setItem('user', value);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const webGetFromLocalStorage = async () => {
+  try {
+    const userFromStorage = localStorage.getItem('user');
+    return userFromStorage != null ? JSON.parse(userFromStorage) : null;
+  } catch (e) {
+    console.log(e);
+  }
+};
