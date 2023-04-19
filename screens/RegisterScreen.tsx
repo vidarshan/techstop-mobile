@@ -1,5 +1,6 @@
 import React, {FC, useState} from 'react';
 import {
+  ActivityIndicator,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -20,6 +21,7 @@ const RegisterScreen: FC<IRegisterScreen> = ({navigation}) => {
   const [password, setPassword] = useState('123456');
   const [email, setEmail] = useState('gates@3gmail.com');
   const {user} = useAppSelector(state => state.user);
+  const {registerLoading, registerError} = useAppSelector(state => state.user);
 
   if (getPlatform() === 'web') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -45,6 +47,9 @@ const RegisterScreen: FC<IRegisterScreen> = ({navigation}) => {
           getPlatform() === 'web' ? styles.authScreenWeb : styles.authScreen
         }>
         <Text style={styles.authHeaderText}>Create your account</Text>
+        {registerError && (
+          <Text style={styles.authErrorText}>Email already in use</Text>
+        )}
         <TextInput
           value={name}
           style={styles.authInput}
@@ -61,10 +66,15 @@ const RegisterScreen: FC<IRegisterScreen> = ({navigation}) => {
           value={password}
           style={styles.authInput}
           placeholder="Your Password"
+          secureTextEntry
           onChangeText={text => setPassword(text)}
         />
         <TouchableOpacity style={styles.authButton} onPress={() => register()}>
-          <Text style={styles.authText}>Register</Text>
+          {registerLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.authText}>Register</Text>
+          )}
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.authInvertedButton}
@@ -111,24 +121,29 @@ const styles = StyleSheet.create({
   authButton: {
     borderRadius: 8,
     padding: 12,
-    backgroundColor: '#DF2E38',
+    backgroundColor: '#fbc405',
     marginTop: 20,
   },
   authInvertedButton: {
     borderRadius: 8,
     marginTop: 16,
-    color: '#DF2E38',
+    color: '#fbc405',
   },
   authText: {
     textAlign: 'center',
-    color: '#fff',
+    color: '#000000',
     fontWeight: '600',
     fontSize: 16,
   },
   authInvertedButtonText: {
     padding: 12,
-    color: '#DF2E38',
+    color: '#000000',
     textAlign: 'center',
+  },
+  authErrorText: {
+    color: '#DF2E38',
+    marginTop: 5,
+    fontWeight: '600',
   },
 });
 

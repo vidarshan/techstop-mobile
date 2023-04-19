@@ -4,7 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {
   authUser,
   getUserFromAsyncStorage,
-  // registerUser,
+  registerUser,
   removeUserFromAsyncStorage,
 } from './store/slices/userSlice';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -40,9 +40,9 @@ export default function AppAuthContext() {
       login: async data => {
         dispatch(authUser(data));
       },
-      // register: async data => {
-      //   dispatch(registerUser(data));
-      // },
+      register: async data => {
+        dispatch(registerUser(data));
+      },
       logout: () => {
         dispatch(removeUserFromAsyncStorage());
       },
@@ -56,19 +56,19 @@ export default function AppAuthContext() {
         <Stack.Navigator
           screenOptions={{
             headerTintColor: '#2e2525',
-            headerStyle: {backgroundColor: '#DF2E38'},
+            headerStyle: {backgroundColor: '#fbc405'},
           }}>
           {user.token == null ? (
             <>
               <Stack.Screen
                 options={{headerShown: false}}
-                name="SignUp"
-                component={RegisterScreen}
+                name="SignIn"
+                component={LoginScreen}
               />
               <Stack.Screen
                 options={{headerShown: false}}
-                name="SignIn"
-                component={LoginScreen}
+                name="SignUp"
+                component={RegisterScreen}
               />
             </>
           ) : (
@@ -81,13 +81,13 @@ export default function AppAuthContext() {
                   headerLeft: () => (
                     <TouchableOpacity
                       onPress={() => RootNavigation.navigate('User', {})}>
-                      <Icon name="user-alt" size={16} color="#fff" />
+                      <Icon name="user-alt" size={16} color="#000000" />
                     </TouchableOpacity>
                   ),
                   headerRight: () => (
                     <TouchableOpacity
                       onPress={() => RootNavigation.navigate('Cart', {})}>
-                      <Icon name="shopping-bag" size={16} color="#fff" />
+                      <Icon name="shopping-bag" size={16} color="#000000" />
                     </TouchableOpacity>
                   ),
                 }}

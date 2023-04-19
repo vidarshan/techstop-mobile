@@ -10,6 +10,7 @@ import {useAppDispatch, useAppSelector} from '../store/store';
 import Card from '../components/Card';
 import {IProductsScreen} from '../models/IProductsScreen';
 //import {getProducts} from '../store/slices/productSlice';
+import {resetErrors} from '../store/slices/userSlice';
 import {getPlatform} from '../utils/Platform';
 import {useNavigate} from 'react-router-dom';
 import WebHeader from '../components/WebHeader';
@@ -33,9 +34,10 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
 
   useEffect(() => {
     //dispatch(getProducts());
+    dispatch(resetErrors());
   }, [dispatch]);
   return (
-    <ScrollView>
+    <ScrollView style={styles.page}>
       <SafeAreaView>
         {getPlatform() === 'web' && (
           <View>
@@ -45,7 +47,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
         <View style={styles.container}>
           {loading ? (
             <View style={styles.loaderContainer}>
-              <ActivityIndicator size="large" color="#DF2E38" />
+              <ActivityIndicator size="large" color="#fbc405" />
             </View>
           ) : (
             <>
@@ -79,6 +81,9 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  page: {
+    backgroundColor: '#ffffff',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -93,7 +98,7 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   webHeader: {
-    backgroundColor: '#DF2E38',
+    backgroundColor: '#fbc405',
     padding: 20,
   },
   webHeaderText: {

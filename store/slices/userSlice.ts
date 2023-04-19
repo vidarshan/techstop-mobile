@@ -14,6 +14,8 @@ interface AuthState {
   loading: boolean;
   loginLoading: boolean;
   registerLoading: boolean;
+  loginError: boolean;
+  registerError: boolean;
   error: boolean;
 }
 
@@ -26,6 +28,8 @@ const initialState: AuthState = {
   },
   loginLoading: false,
   registerLoading: false,
+  loginError: false,
+  registerError: false,
   loading: false,
   error: false,
 };
@@ -83,7 +87,13 @@ export const getUserFromAsyncStorage = createAsyncThunk(
 export const UserSlice = createSlice({
   name: 'User',
   initialState,
-  reducers: {},
+  reducers: {
+    resetErrors(state) {
+      state.error = false;
+      state.loginError = false;
+      state.registerError = false;
+    },
+  },
   extraReducers: builder => {
     builder.addCase(authUser.fulfilled, (state, action) => {
       state.user._id = action.payload._id;
@@ -91,15 +101,15 @@ export const UserSlice = createSlice({
       state.user.email = action.payload.email;
       state.user.name = action.payload.name;
       state.loginLoading = false;
-      state.error = false;
+      state.loginError = false;
     });
     builder.addCase(authUser.pending, state => {
       state.loginLoading = true;
-      state.error = false;
+      state.loginError = false;
     });
     builder.addCase(authUser.rejected, state => {
       state.loginLoading = false;
-      state.error = true;
+      state.loginError = true;
     });
     builder.addCase(registerUser.fulfilled, (state, action) => {
       console.log(action.payload);
@@ -108,16 +118,15 @@ export const UserSlice = createSlice({
       state.user.email = action.payload.email;
       state.user.name = action.payload.name;
       state.registerLoading = false;
-      state.error = false;
+      state.registerError = false;
     });
     builder.addCase(registerUser.pending, state => {
       state.registerLoading = true;
-      state.error = false;
+      state.registerError = false;
     });
-    builder.addCase(registerUser.rejected, (state, action) => {
-      console.log('ac', action);
+    builder.addCase(registerUser.rejected, state => {
       state.registerLoading = false;
-      state.error = true;
+      state.registerError = true;
     });
     builder.addCase(setUserToAsyncStorage.fulfilled, state => {
       state.loading = false;
@@ -169,4 +178,5 @@ export const UserSlice = createSlice({
     });
   },
 });
+export const {resetErrors} = UserSlice.actions;
 export default UserSlice.reducer;

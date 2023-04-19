@@ -13,12 +13,11 @@ import {ILoginScreen} from '../models/ILoginScreen';
 import {useNavigate} from 'react-router';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {authUser, setUserToAsyncStorage} from '../store/slices/userSlice';
-// import {nativeGetMyObject} from '../utils/Storage';
 
-const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
+const LoginScreen: FC<ILoginScreen> = () => {
   let webNavigation: any = {};
   const dispatch = useAppDispatch();
-  const {loginLoading, error, user} = useAppSelector(state => state.user);
+  const {loginLoading, loginError, user} = useAppSelector(state => state.user);
   const [email, setEmail] = useState('john@gmail.com');
   const [password, setPassword] = useState('123456');
 
@@ -30,28 +29,15 @@ const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
 
   const login = () => {
     dispatch(authUser({email, password}));
-    if (!error) {
-      console.log('user', user);
-      dispatch(
-        setUserToAsyncStorage({
-          _id: user._id,
-          email: user.email,
-          name: user.name,
-          token: user.token,
-        }),
-      );
-    }
+    dispatch(
+      setUserToAsyncStorage({
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        token: user.token,
+      }),
+    );
   };
-
-  // useEffect(() => {
-  //   if (getPlatform() !== 'web') {
-  //     dispatch(getUserFromAsyncStorage());
-  //     if (user.token !== null) {
-  //       console.log(navigation);
-  //       navigation.navigate('Home', {});
-  //     }
-  //   }
-  // }, [dispatch, navigation, user]);
 
   return (
     <SafeAreaView style={styles.authContainer}>
@@ -60,6 +46,16 @@ const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
           getPlatform() === 'web' ? styles.authScreenWeb : styles.authScreen
         }>
         <Text style={styles.authHeaderText}>Login to your account</Text>
+        {loginError && (
+          <Text style={styles.authErrorText}>
+            Wrong credentials. Try again.
+          </Text>
+        )}
+        <View style={styles.demoAlertContainer}>
+          <Text style={styles.demoAlertText}>
+            Use given credentials for a full tour of all features.
+          </Text>
+        </View>
         <TextInput
           value={email}
           style={styles.authInput}
@@ -80,15 +76,6 @@ const LoginScreen: FC<ILoginScreen> = ({navigation}) => {
             <Text style={styles.authText}>Login</Text>
           )}
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.authInvertedButton}
-          onPress={() => {
-            getPlatform() === 'web'
-              ? webNavigation('/register')
-              : navigation.navigate('SignUp');
-          }}>
-          <Text style={styles.authInvertedButtonText}>New User?</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -99,6 +86,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: '#ffffff',
   },
   authScreenWeb: {
     display: 'flex',
@@ -125,24 +113,37 @@ const styles = StyleSheet.create({
   authButton: {
     borderRadius: 8,
     padding: 12,
-    backgroundColor: '#DF2E38',
+    backgroundColor: '#fbc405',
     marginTop: 20,
   },
   authInvertedButton: {
     borderRadius: 8,
     marginTop: 16,
-    color: '#DF2E38',
+    color: '#000000',
   },
   authText: {
     textAlign: 'center',
-    color: '#fff',
+    color: '#000000',
     fontWeight: '600',
     fontSize: 16,
   },
   authInvertedButtonText: {
     padding: 12,
-    color: '#DF2E38',
+    color: '#000000',
     textAlign: 'center',
+  },
+  authErrorText: {
+    color: '#DF2E38',
+    marginTop: 5,
+    fontWeight: '600',
+  },
+  demoAlertContainer: {
+    marginTop: 10,
+    borderRadius: 4,
+  },
+  demoAlertText: {
+    color: '#949494',
+    fontWeight: '500',
   },
 });
 
