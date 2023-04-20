@@ -56,7 +56,6 @@ export const registerUser = createAsyncThunk(
         password: data.password,
       },
     );
-    console.log(response);
     return response.data;
   },
 );
@@ -80,6 +79,29 @@ export const getUserFromAsyncStorage = createAsyncThunk(
   'user/getUserFromStorage',
   async () => {
     const jsonValue = await AsyncStorage.getItem('@user');
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  },
+);
+
+export const setUserToLocalStorage = createAsyncThunk(
+  'user/setUserToLocalStorage',
+  async (userObj: any) => {
+    const jsonValue = JSON.stringify(userObj);
+    await localStorage.setItem('user', jsonValue);
+  },
+);
+
+export const removeUserFromLocalStorage = createAsyncThunk(
+  'user/removeUserFromLocalStorage',
+  async () => {
+    await localStorage.removeItem('user');
+  },
+);
+
+export const getUserFromLocalStorage = createAsyncThunk(
+  'user/getUserFromLocalStorage',
+  async () => {
+    const jsonValue = await localStorage.getItem('user');
     return jsonValue != null ? JSON.parse(jsonValue) : null;
   },
 );
@@ -173,6 +195,54 @@ export const UserSlice = createSlice({
       state.error = false;
     });
     builder.addCase(removeUserFromAsyncStorage.rejected, state => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(setUserToLocalStorage.fulfilled, state => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(setUserToLocalStorage.pending, state => {
+      state.loading = true;
+      state.error = false;
+    });
+    builder.addCase(setUserToLocalStorage.rejected, state => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(getUserFromLocalStorage.fulfilled, (state, action) => {
+      if (action.payload === null) {
+        state.loading = true;
+      } else {
+        state.user._id = action.payload._id;
+        state.user.token = action.payload.token;
+        state.user.email = action.payload.email;
+        state.user.name = action.payload.name;
+        state.loading = false;
+        state.error = false;
+      }
+    });
+    builder.addCase(getUserFromLocalStorage.pending, state => {
+      state.loading = true;
+      state.error = false;
+    });
+    builder.addCase(getUserFromLocalStorage.rejected, state => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(removeUserFromLocalStorage.fulfilled, state => {
+      state.user._id = '';
+      state.user.token = null;
+      state.user.email = '';
+      state.user.name = '';
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(removeUserFromLocalStorage.pending, state => {
+      state.loading = true;
+      state.error = false;
+    });
+    builder.addCase(removeUserFromLocalStorage.rejected, state => {
       state.loading = false;
       state.error = false;
     });
