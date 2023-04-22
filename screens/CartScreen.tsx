@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {
   FlatList,
   Image,
@@ -14,35 +14,39 @@ import {getPlatform} from '../utils/Platform';
 import WebHeader from '../components/WebHeader';
 import {ICartScreen} from '../models/ICartScreen';
 import {useNavigate} from 'react-router-dom';
+import {useAppDispatch, useAppSelector} from '../store/store';
+import {
+  CartItem as ICart,
+  getItemsFromStorage,
+} from '../store/slices/cartSlice';
+import {ICartItem} from '../models/ICartItem';
 
 const CartScreen: FC<ICartScreen> = ({navigation}) => {
   let webNavigate: any = {};
+  const dispatch = useAppDispatch();
+  const {cart} = useAppSelector(state => state.cart);
   if (getPlatform() === 'web') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     webNavigate = useNavigate();
   }
 
-  const DATA = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'First Item',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Second Item',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'Third Item',
-    },
-  ];
+  useEffect(() => {
+    dispatch(getItemsFromStorage());
+  }, [dispatch]);
+  console.log(cart);
+  console.log(
+    cart.reduce(
+      (accumulator: any, currentValue) => accumulator.price + currentValue,
+      0,
+    ),
+  );
 
   return (
     <SafeAreaView>
-      {getPlatform() === 'web' && <WebHeader backHeader="Cart" />}
+      {getPlatform() === 'web' && <WebHeader type="back" backHeader="Cart" />}
       <FlatList
-        data={DATA}
-        renderItem={() => <CartItem />}
+        data={cart}
+        renderItem={(item: ICartItem) => <CartItem item={item} />}
         ListEmptyComponent={
           <ScrollView contentContainerStyle={styles.emptyContentContainer}>
             <View style={styles.emptyContainer}>
@@ -60,8 +64,8 @@ const CartScreen: FC<ICartScreen> = ({navigation}) => {
         }
         ListFooterComponent={
           <TouchableOpacity
-            disabled={!DATA.length}
-            style={!DATA.length ? styles.disabled : styles.footerContainer}
+            disabled={!cart.length}
+            style={!cart.length ? styles.disabled : styles.footerContainer}
             onPress={() => {
               getPlatform() === 'web'
                 ? webNavigate('/orders')
@@ -69,15 +73,15 @@ const CartScreen: FC<ICartScreen> = ({navigation}) => {
             }}>
             <Text
               style={
-                !DATA.length ? styles.disabledText : styles.footerContainerText
+                !cart.length ? styles.disabledText : styles.footerContainerText
               }>
               Proceed to Checkout
             </Text>
             <Text
               style={
-                !DATA.length ? styles.disabledText : styles.footerContainerText
+                !cart.length ? styles.disabledText : styles.footerContainerText
               }>
-              $1200.99
+              ${cart.reduce((acc: any, item: ICart) => acc + item.price, 0)}
             </Text>
           </TouchableOpacity>
         }

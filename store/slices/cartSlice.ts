@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {PayloadAction, createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getPlatform} from '../../utils/Platform';
 
@@ -22,37 +22,44 @@ const initialState: CartState = {
 };
 
 export const getItemsFromStorage = createAsyncThunk(
-  'user/getUserFromStorage',
+  'cart/getItemsFromStorage',
   async () => {
-    const jsonValue = await AsyncStorage.getItem('user');
-    console.log('jsonValue', jsonValue);
-    return jsonValue != null ? JSON.parse(jsonValue) : null;
+    const jsonValue = await AsyncStorage.getItem('cart');
+    return jsonValue != null ? JSON.parse(jsonValue) : [];
   },
 );
 
 export const removeItemFromStorage = createAsyncThunk(
-  'user/removeUserFromAsyncStorage',
-  async () => {
+  'cart/removeItemFromStorage',
+  async (id: string) => {
+    console.log(id);
     if (getPlatform() === 'web') {
-      await localStorage.removeItem('user');
+      const cartItems = localStorage.getItem('cart');
+      const mutableCartItems = cartItems != null ? JSON.parse(cartItems) : [];
+      console.log('mutable', mutableCartItems);
+      const cartItemsWithoutItem = mutableCartItems.filter(item => {
+        return item.product !== id;
+      });
+      console.log(cartItemsWithoutItem);
+      await localStorage.setItem('cart', JSON.stringify(cartItemsWithoutItem));
+      return cartItemsWithoutItem;
     } else {
       await AsyncStorage.removeItem('@user');
+      return {};
     }
   },
 );
 
 export const setItemsToStorage = createAsyncThunk(
-  'user/setUserToLocalStorage',
+  'cart/setItemsToStorage',
   async (cartObj: CartItem) => {
     if (getPlatform() === 'web') {
       const currentItems = await localStorage.getItem('cart');
-      console.log('🚀 ~ file: cartSlice.ts:52 ~ currentItems:', currentItems);
       const mutableCurrentObj =
         currentItems != null ? JSON.parse(currentItems) : [];
       mutableCurrentObj.push(cartObj);
-
       await localStorage.setItem('cart', JSON.stringify(mutableCurrentObj));
-      return mutableCurrentObj;
+      return cartObj;
     }
   },
 );
@@ -75,7 +82,8 @@ export const CartSlice = createSlice({
       state.loading = false;
       state.error = true;
     });
-    builder.addCase(removeItemFromStorage.fulfilled, state => {
+    builder.addCase(removeItemFromStorage.fulfilled, (state, action) => {
+      state.cart = action.payload;
       state.loading = false;
       state.error = false;
     });
@@ -87,11 +95,16 @@ export const CartSlice = createSlice({
       state.loading = false;
       state.error = true;
     });
-    builder.addCase(setItemsToStorage.fulfilled, (state, action) => {
-      state.cart = action.payload.mutableCurrentObj;
-      state.loading = false;
-      state.error = false;
-    });
+    builder.addCase(
+      setItemsToStorage.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        const mutableCart = state.cart;
+        mutableCart.push(action?.payload);
+        state.cart = mutableCart;
+        state.loading = false;
+        state.error = false;
+      },
+    );
     builder.addCase(setItemsToStorage.pending, state => {
       state.loading = true;
       state.error = false;

@@ -1,18 +1,26 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {IoIosArrowBack} from 'react-icons/io';
 import {RiUser3Fill, RiShoppingBagFill} from 'react-icons/ri';
 import {IWebHeader} from '../models/IWebHeader';
 import {useNavigate} from 'react-router-dom';
+import {useAppDispatch, useAppSelector} from '../store/store';
+import {getItemsFromStorage} from '../store/slices/cartSlice';
 
 const WebHeader: FC<IWebHeader> = ({
   header = '',
   //backHeader = '',
   leftPath = '/',
-  //rightPath = '/',
+  rightPath = '/',
   type = 'normal',
 }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const {cart = []} = useAppSelector(state => state.cart);
+
+  useEffect(() => {
+    dispatch(getItemsFromStorage());
+  }, [dispatch]);
   return (
     <>
       {type === 'normal' ? (
@@ -39,16 +47,22 @@ const WebHeader: FC<IWebHeader> = ({
         </>
       ) : (
         <>
-          {' '}
-          <TouchableOpacity style={styles.dualWebHeader}>
+          <View style={styles.dualWebHeader}>
             <View style={styles.webHeaderIcon}>
               <RiUser3Fill size={18} color="#000" />
             </View>
             <Text style={styles.webHeaderText}>{header}</Text>
-            <View style={styles.webHeaderIcon}>
+            <TouchableOpacity
+              style={styles.webHeaderIcon}
+              onPress={() => navigate(rightPath)}>
               <RiShoppingBagFill size={18} color="#000" />
-            </View>
-          </TouchableOpacity>
+              {cart && cart.length > 0 && (
+                <View style={styles.badgeContainer}>
+                  <Text style={styles.badgeText}>{cart.length}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
         </>
       )}
     </>
@@ -88,6 +102,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
   },
+  badgeContainer: {
+    position: 'absolute',
+    top: -5,
+    left: 10,
+    width: 16,
+    height: 16,
+    borderRadius: 50,
+    backgroundColor: '#c90000',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeText: {fontSize: 12, color: '#fff', fontWeight: '600'},
 });
 
 export default WebHeader;

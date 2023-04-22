@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {ICard} from '../models/ICard';
 import {getPlatform} from '../utils/Platform';
@@ -19,6 +19,7 @@ const Card: React.FC<ICard> = ({
   webNavigation,
   location,
 }) => {
+  const cartString = useRef('Add to Cart');
   const dispatch = useAppDispatch();
   const addItemToCart = (
     productId: any,
@@ -33,6 +34,7 @@ const Card: React.FC<ICard> = ({
       price: productPrice,
     };
     dispatch(setItemsToStorage(cartItemObj));
+    cartString.current = 'Added';
   };
 
   return (
@@ -71,7 +73,7 @@ const Card: React.FC<ICard> = ({
       <TouchableOpacity
         style={styles.button}
         onPress={() => addItemToCart(_id, altImage, name, price)}>
-        <Text style={styles.buttonText}>Add to Cart</Text>
+        <Text style={styles.buttonText}>{cartString.current}</Text>
       </TouchableOpacity>
     </TouchableOpacity>
   );

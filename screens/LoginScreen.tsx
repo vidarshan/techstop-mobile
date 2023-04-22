@@ -10,21 +10,16 @@ import {
 } from 'react-native';
 import {getPlatform} from '../utils/Platform';
 import {ILoginScreen} from '../models/ILoginScreen';
-import {useNavigate} from 'react-router';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {authUser} from '../store/slices/userSlice';
 
 const LoginScreen: FC<ILoginScreen> = () => {
-  let webNavigation: any = {};
   const dispatch = useAppDispatch();
   const {loginLoading, loginError, user} = useAppSelector(state => state.user);
   const [email, setEmail] = useState('john@gmail.com');
   const [password, setPassword] = useState('123456');
 
   if (getPlatform() === 'web') {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    webNavigation = useNavigate();
-    console.log(webNavigation);
   }
 
   const login = () => {

@@ -4,30 +4,37 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {ICartItem} from '../models/ICartItem';
 import {IoTrash} from 'react-icons/io5';
 import {getPlatform} from '../utils/Platform';
+import {useAppDispatch} from '../store/store';
+import {removeItemFromStorage} from '../store/slices/cartSlice';
 
 const CartItem: FC<ICartItem> = ({item}) => {
-  console.log(item);
+  const dispatch = useAppDispatch();
+
+  const removeItem = (id: string) => {
+    dispatch(removeItemFromStorage(id));
+  };
   return (
     <TouchableOpacity style={styles.itemContainer}>
       <View style={styles.cartItemImageContainer}>
         <Image
           style={styles.cartItemImage}
           source={{
-            uri: 'https://res.cloudinary.com/dury4s2jk/image/upload/v1680417407/633c95ef27f191664914927_kyawha.jpg',
+            uri: item.item.image,
           }}
         />
       </View>
       <View style={styles.cartItemTextContainer}>
         <View>
-          <Text style={styles.brandName}>CartItem</Text>
-          <Text style={styles.itemName}>CartItem</Text>
-          <Text>1 Nos.</Text>
+          <Text style={styles.brandName}>{item.item.name}</Text>
+          <Text style={styles.itemName}>${item.item.price}</Text>
         </View>
-        {getPlatform() === 'web' ? (
-          <IoTrash size={20} color="#DF2E38" />
-        ) : (
-          <Icon name="trash" size={20} color="#DF2E38" />
-        )}
+        <TouchableOpacity onPress={() => removeItem(item.item.product)}>
+          {getPlatform() === 'web' ? (
+            <IoTrash size={20} color="#DF2E38" />
+          ) : (
+            <Icon name="trash" size={20} color="#DF2E38" />
+          )}
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
