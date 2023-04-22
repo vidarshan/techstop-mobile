@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -12,7 +12,7 @@ import {getPlatform} from '../utils/Platform';
 import {ILoginScreen} from '../models/ILoginScreen';
 import {useNavigate} from 'react-router';
 import {useAppDispatch, useAppSelector} from '../store/store';
-import {authUser, setUserToAsyncStorage} from '../store/slices/userSlice';
+import {authUser} from '../store/slices/userSlice';
 
 const LoginScreen: FC<ILoginScreen> = () => {
   let webNavigation: any = {};
@@ -29,15 +29,11 @@ const LoginScreen: FC<ILoginScreen> = () => {
 
   const login = () => {
     dispatch(authUser({email, password}));
-    dispatch(
-      setUserToAsyncStorage({
-        _id: user._id,
-        email: user.email,
-        name: user.name,
-        token: user.token,
-      }),
-    );
   };
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <SafeAreaView style={styles.authContainer}>

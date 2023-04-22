@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {IoIosStar} from 'react-icons/io';
 import {getProduct} from '../store/slices/productSlice';
+//import {setItemsToStorage} from '../store/slices/cartSlice';
 const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   let name;
   let brand;
@@ -59,6 +60,22 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
     countInStock = route.params.countInStock;
   }
 
+  const addToCart = (
+    productImage: string,
+    productName: string,
+    productPrice: number,
+    productId: string,
+  ) => {
+    const cartItemObj = {
+      product: productId,
+      image: productImage,
+      name: productName,
+      price: productPrice,
+    };
+    console.log('🚀 ~ file: ProductScreen.tsx:75 ~ cartItemObj:', cartItemObj);
+    //dispatch(setItemsToStorage(cartItemObj));
+  };
+
   useEffect(() => {
     if (getPlatform() === 'web') {
       dispatch(getProduct(id));
@@ -99,7 +116,9 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
               </View>
             );
           })}
-          <TouchableHighlight style={styles.addToCart}>
+          <TouchableHighlight
+            style={styles.addToCart}
+            onPress={() => addToCart(image, name, price, id)}>
             <Text style={styles.addToCartText}>Add to Cart</Text>
           </TouchableHighlight>
           <Text>Ratings and Reviews</Text>

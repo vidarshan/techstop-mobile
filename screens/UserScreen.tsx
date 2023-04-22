@@ -10,11 +10,26 @@ import {
 import {getPlatform} from '../utils/Platform';
 import WebHeader from '../components/WebHeader';
 import OrderCard from '../components/OrderCard';
-import {useAppDispatch} from '../store/store';
+import {useAppDispatch, useAppSelector} from '../store/store';
 import {removeUserFromAsyncStorage} from '../store/slices/userSlice';
+import {useNavigate} from 'react-router-dom';
 
 const UserScreen = () => {
+  const {user} = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
+  const webNavigation = useNavigate();
+
+  if (getPlatform() === 'web') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+  }
+
+  const logoutUser = () => {
+    dispatch(removeUserFromAsyncStorage());
+    if (user.token !== null) {
+      webNavigation('/');
+    }
+  };
+
   const DATA = [
     {
       shippingAddress: {
@@ -253,15 +268,13 @@ const UserScreen = () => {
   ];
   return (
     <SafeAreaView style={styles.userScreen}>
-      {getPlatform() === 'web' && <WebHeader />}
+      {getPlatform() === 'web' && <WebHeader type="back" header="Products" />}
       <View style={styles.avatarContainer}>
         <View style={styles.avatarInnerContainer}>
           <TouchableOpacity style={styles.avatar} />
           <Text style={styles.username}>John Doe</Text>
         </View>
-        <TouchableOpacity
-          style={styles.logout}
-          onPress={() => dispatch(removeUserFromAsyncStorage())}>
+        <TouchableOpacity style={styles.logout} onPress={() => logoutUser()}>
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>

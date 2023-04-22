@@ -2,6 +2,8 @@ import React from 'react';
 import {Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {ICard} from '../models/ICard';
 import {getPlatform} from '../utils/Platform';
+import {setItemsToStorage} from '../store/slices/cartSlice';
+import {useAppDispatch} from '../store/store';
 const Card: React.FC<ICard> = ({
   _id,
   name,
@@ -17,6 +19,22 @@ const Card: React.FC<ICard> = ({
   webNavigation,
   location,
 }) => {
+  const dispatch = useAppDispatch();
+  const addItemToCart = (
+    productId: any,
+    productImage: string,
+    productName: string,
+    productPrice: number,
+  ) => {
+    const cartItemObj = {
+      product: productId.$oid,
+      image: productImage,
+      name: productName,
+      price: productPrice,
+    };
+    dispatch(setItemsToStorage(cartItemObj));
+  };
+
   return (
     <TouchableOpacity
       style={styles.container}
@@ -50,7 +68,9 @@ const Card: React.FC<ICard> = ({
         {name}
       </Text>
       <Text style={styles.price}>${price}</Text>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => addItemToCart(_id, altImage, name, price)}>
         <Text style={styles.buttonText}>Add to Cart</Text>
       </TouchableOpacity>
     </TouchableOpacity>

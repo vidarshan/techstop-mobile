@@ -6,7 +6,7 @@ export interface ICard {
   description?: string;
   rating?: number;
   numReviews?: number;
-  price?: number;
+  price: number;
   countInStock?: number;
   reviews?: any[];
   altImage: string;

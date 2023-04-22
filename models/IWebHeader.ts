@@ -4,4 +4,5 @@ export interface IWebHeader {
   rightPath?: string;
   backHeader?: string;
   header?: string;
+  type?: string;
 }

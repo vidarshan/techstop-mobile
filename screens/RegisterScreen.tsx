@@ -12,7 +12,7 @@ import {getPlatform} from '../utils/Platform';
 import {IRegisterScreen} from '../models/IRegisterScreen';
 import {useNavigate} from 'react-router';
 import {useAppDispatch, useAppSelector} from '../store/store';
-import {registerUser, setUserToAsyncStorage} from '../store/slices/userSlice';
+import {registerUser} from '../store/slices/userSlice';
 
 const RegisterScreen: FC<IRegisterScreen> = ({navigation}) => {
   let webNavigation: any = {};
@@ -20,7 +20,6 @@ const RegisterScreen: FC<IRegisterScreen> = ({navigation}) => {
   const [name, setName] = useState('Gates');
   const [password, setPassword] = useState('123456');
   const [email, setEmail] = useState('gates@3gmail.com');
-  const {user} = useAppSelector(state => state.user);
   const {registerLoading, registerError} = useAppSelector(state => state.user);
 
   if (getPlatform() === 'web') {
@@ -30,14 +29,6 @@ const RegisterScreen: FC<IRegisterScreen> = ({navigation}) => {
 
   const register = () => {
     dispatch(registerUser({name, email, password}));
-    dispatch(
-      setUserToAsyncStorage({
-        _id: user._id,
-        email: user.email,
-        name: user.name,
-        token: user.token,
-      }),
-    );
   };
 
   return (

@@ -41,7 +41,14 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
       <SafeAreaView>
         {getPlatform() === 'web' && (
           <View>
-            <WebHeader rightPath="/cart" backHeader="Products" />
+            <WebHeader
+              type="dual"
+              leftPath="/user"
+              rightPath="/cart"
+              backHeader="Products"
+              header="Products"
+              back
+            />
           </View>
         )}
         <View style={styles.container}>

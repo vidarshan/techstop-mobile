@@ -26,6 +26,7 @@ export default function AppAuthContext() {
   const Stack = createNativeStackNavigator();
 
   React.useEffect(() => {
+    console.log(user);
     const bootstrapAsync = () => {
       try {
         dispatch(getUserFromAsyncStorage());
@@ -33,7 +34,7 @@ export default function AppAuthContext() {
     };
 
     bootstrapAsync();
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   const authContext = React.useMemo(
     () => ({

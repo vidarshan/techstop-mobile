@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getPlatform} from '../../utils/Platform';
 
 export interface User {
   _id: any;
@@ -42,6 +43,14 @@ export const authUser = createAsyncThunk('user/login', async (data: any) => {
       password: data.password,
     },
   );
+
+  if (response.data.token !== null) {
+    if (getPlatform() === 'web') {
+      await localStorage.setItem('user', JSON.stringify(response.data));
+    } else {
+      await AsyncStorage.setItem('user', JSON.stringify(response.data));
+    }
+  }
   return response.data;
 });
 
@@ -71,7 +80,11 @@ export const setUserToAsyncStorage = createAsyncThunk(
 export const removeUserFromAsyncStorage = createAsyncThunk(
   'user/removeUserFromAsyncStorage',
   async () => {
-    await AsyncStorage.removeItem('@user');
+    if (getPlatform() === 'web') {
+      await localStorage.removeItem('user');
+    } else {
+      await AsyncStorage.removeItem('@user');
+    }
   },
 );
 
@@ -79,6 +92,7 @@ export const getUserFromAsyncStorage = createAsyncThunk(
   'user/getUserFromStorage',
   async () => {
     const jsonValue = await AsyncStorage.getItem('@user');
+    console.log('jsonValue', jsonValue);
     return jsonValue != null ? JSON.parse(jsonValue) : null;
   },
 );
@@ -134,7 +148,6 @@ export const UserSlice = createSlice({
       state.loginError = true;
     });
     builder.addCase(registerUser.fulfilled, (state, action) => {
-      console.log(action.payload);
       state.user._id = action.payload._id;
       state.user.token = action.payload.token;
       state.user.email = action.payload.email;
@@ -151,6 +164,7 @@ export const UserSlice = createSlice({
       state.registerError = true;
     });
     builder.addCase(setUserToAsyncStorage.fulfilled, state => {
+      console.log('ddd');
       state.loading = false;
       state.error = false;
     });
