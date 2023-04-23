@@ -17,7 +17,7 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {IoIosStar} from 'react-icons/io';
 import {getProduct} from '../store/slices/productSlice';
-//import {setItemsToStorage} from '../store/slices/cartSlice';
+import {setItemsToStorage} from '../store/slices/cartSlice';
 const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   let name;
   let brand;
@@ -72,8 +72,7 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
       name: productName,
       price: productPrice,
     };
-    console.log('🚀 ~ file: ProductScreen.tsx:75 ~ cartItemObj:', cartItemObj);
-    //dispatch(setItemsToStorage(cartItemObj));
+    dispatch(setItemsToStorage(cartItemObj));
   };
 
   useEffect(() => {
@@ -86,7 +85,7 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   return (
     <SafeAreaView>
       {getPlatform() === 'web' && (
-        <WebHeader header="Products" rightPath="/" back />
+        <WebHeader header="Products" rightPath="/cart" back type="dual" />
       )}
       {loading ? (
         <ActivityIndicator color="#DF2E38" size="large" />

@@ -40,7 +40,6 @@ export const removeItemFromStorage = createAsyncThunk(
       const cartItemsWithoutItem = mutableCartItems.filter(item => {
         return item.product !== id;
       });
-      console.log(cartItemsWithoutItem);
       await localStorage.setItem('cart', JSON.stringify(cartItemsWithoutItem));
       return cartItemsWithoutItem;
     } else {

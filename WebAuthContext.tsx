@@ -56,11 +56,14 @@ export default function WebAppAuthContext() {
             </>
           ) : (
             <>
-              <Route path="/" element={<ProductsScreen navigation={{}} />} />
+              <Route path="/" element={<OrderScreen />} />
+              <Route
+                path="/orders"
+                element={<ProductsScreen navigation={{}} />}
+              />
               <Route path="/user" element={<UserScreen />} />
               <Route path="/product/:id" element={<ProductScreen />} />
               <Route path="/cart" element={<CartScreen />} />
-              <Route path="/orders" element={<OrderScreen />} />
             </>
           )}
         </Routes>
