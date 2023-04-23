@@ -14,6 +14,7 @@ import OrderScreen from './screens/OrderScreen';
 import UserScreen from './screens/UserScreen';
 import LoginScreen from './screens/LoginScreen';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import OrderDetails from './screens/OrderDetails';
 
 export default function WebAppAuthContext() {
   const dispatch = useAppDispatch();
@@ -56,11 +57,12 @@ export default function WebAppAuthContext() {
             </>
           ) : (
             <>
-              <Route path="/" element={<OrderScreen />} />
+              <Route path="/" element={<OrderDetails />} />
               <Route
-                path="/orders"
+                path="/details"
                 element={<ProductsScreen navigation={{}} />}
               />
+              <Route path="/orders" element={<OrderScreen />} />
               <Route path="/user" element={<UserScreen />} />
               <Route path="/product/:id" element={<ProductScreen />} />
               <Route path="/cart" element={<CartScreen />} />
