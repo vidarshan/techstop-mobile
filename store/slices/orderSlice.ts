@@ -64,6 +64,9 @@ interface OrderState {
   orderSummary: OrderSummary | null;
   orderSummaryLoading: boolean;
   orderSummaryError: boolean;
+  myOrders: any[];
+  myOrdersLoading: boolean;
+  myOrdersError: boolean;
 }
 
 const initialState: OrderState = {
@@ -100,6 +103,9 @@ const initialState: OrderState = {
   },
   orderSummaryLoading: false,
   orderSummaryError: false,
+  myOrders: [],
+  myOrdersLoading: false,
+  myOrdersError: false,
 };
 
 export const getInfoFromStorage = createAsyncThunk(
@@ -177,6 +183,27 @@ export const getOrder = createAsyncThunk(
     return response.data;
   },
 );
+
+export const getMyOrders = createAsyncThunk('order/getMyOrders', async () => {
+  const tokenFromStorage = localStorage.getItem('user');
+  let jsonTokenFromStorage;
+  if (tokenFromStorage !== null) {
+    jsonTokenFromStorage = JSON.parse(tokenFromStorage);
+  } else {
+    jsonTokenFromStorage = '';
+  }
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${jsonTokenFromStorage.token}`,
+    },
+  };
+  const response = await axios.get(
+    'https://tech-stop.onrender.com/api/v1/orders/myorders',
+    config,
+  );
+  return response.data;
+});
 
 export const OrderSlice = createSlice({
   name: 'Order',
@@ -269,6 +296,19 @@ export const OrderSlice = createSlice({
     builder.addCase(placeOrder.rejected, state => {
       state.orderLoading = false;
       state.orderError = false;
+    });
+    builder.addCase(getMyOrders.fulfilled, (state, action) => {
+      state.myOrders = action.payload;
+      state.myOrdersLoading = false;
+      state.myOrdersError = false;
+    });
+    builder.addCase(getMyOrders.pending, state => {
+      state.myOrdersLoading = true;
+      state.myOrdersError = false;
+    });
+    builder.addCase(getMyOrders.rejected, state => {
+      state.myOrdersLoading = false;
+      state.myOrdersError = true;
     });
   },
 });

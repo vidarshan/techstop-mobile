@@ -1,11 +1,11 @@
 import React, {FC, useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {IoIosArrowBack} from 'react-icons/io';
-import {RiUser3Fill, RiShoppingBagFill} from 'react-icons/ri';
 import {IWebHeader} from '../models/IWebHeader';
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {getItemsFromStorage} from '../store/slices/cartSlice';
+import {FaUserCircle, FaShoppingBag} from 'react-icons/fa';
 
 const WebHeader: FC<IWebHeader> = ({
   header = '',
@@ -51,13 +51,13 @@ const WebHeader: FC<IWebHeader> = ({
             <TouchableOpacity
               style={styles.webHeaderIcon}
               onPress={() => navigate(leftPath)}>
-              <RiUser3Fill size={18} color="#000" />
+              <FaUserCircle size={20} color="#000" />
             </TouchableOpacity>
             <Text style={styles.webHeaderText}>{header}</Text>
             <TouchableOpacity
               style={styles.webHeaderIcon}
               onPress={() => navigate(rightPath)}>
-              <RiShoppingBagFill size={18} color="#000" />
+              <FaShoppingBag size={18} color="#000" />
               {cart && cart.length > 0 && (
                 <View style={styles.badgeContainer}>
                   <Text style={styles.badgeText}>{cart.length}</Text>

@@ -100,9 +100,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontWeight: '600',
   },
-  addressContainer: {marginTop: 10, fontSize: 16, fontWeight: '500'},
+  addressContainer: {marginTop: 10, fontSize: 12},
 });
 
 export default OrderCard;
