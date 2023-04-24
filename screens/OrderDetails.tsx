@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
+  ActivityIndicator,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,8 +21,28 @@ import {
   BiX,
   BiCalendar,
 } from 'react-icons/bi';
+import {useAppDispatch, useAppSelector} from '../store/store';
+import {getOrder} from '../store/slices/orderSlice';
+import moment from 'moment';
+import {useNavigate} from 'react-router-dom';
 
 const OrderDetails = () => {
+  let webNavigation;
+  const dispatch = useAppDispatch();
+  const {orderId, orderSummary, orderSummaryLoading} = useAppSelector(
+    state => state.order,
+  );
+
+  if (getPlatform() === 'web') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    webNavigation = useNavigate();
+  }
+
+  useEffect(() => {
+    console.log(orderId);
+    dispatch(getOrder(orderId));
+  }, [dispatch, orderId]);
+
   return (
     <ScrollView>
       {getPlatform() === 'web' && <WebHeader type="back" backHeader="Cart" />}
@@ -32,64 +54,94 @@ const OrderDetails = () => {
           <Text style={styles.placedText}>Order Placed</Text>
         </View>
       </View>
-      <View style={styles.detailContainer}>
-        <View style={styles.infoRow}>
-          {getPlatform() === 'web' && <BiPackage />}
-          <Text style={styles.infoText}>Order Number</Text>
-        </View>
-        <Text style={styles.detailText}>Order 323432523432rwqdwf3</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <View style={styles.infoRow}>
-          {getPlatform() === 'web' && <BiHome />}
-          <Text style={styles.infoText}>Delivery Address</Text>
-        </View>
-        <Text style={styles.detailText}>13, VB 23423, Sri Lanka</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <View style={styles.infoRow}>
-          {getPlatform() === 'web' && <BiUserCircle />}
-          <Text style={styles.infoText}>Customer Details</Text>
-        </View>
+      {orderSummaryLoading ? (
+        <ActivityIndicator color="#000" />
+      ) : (
+        <>
+          <View style={styles.detailContainer}>
+            <View style={styles.infoRow}>
+              {getPlatform() === 'web' && <BiPackage />}
+              <Text style={styles.infoText}>Order Number</Text>
+            </View>
+            <Text style={styles.detailText}>Order ${orderId}</Text>
+          </View>
+          <View style={styles.detailContainer}>
+            <View style={styles.infoRow}>
+              {getPlatform() === 'web' && <BiHome />}
+              <Text style={styles.infoText}>Delivery Address</Text>
+            </View>
+            <Text style={styles.detailText}>
+              {`${orderSummary?.shippingAddress?.address}, ${orderSummary?.shippingAddress?.city}, ${orderSummary?.shippingAddress?.postalCode} ${orderSummary?.shippingAddress?.country}`}
+            </Text>
+          </View>
+          <View style={styles.detailContainer}>
+            <View style={styles.infoRow}>
+              {getPlatform() === 'web' && <BiUserCircle />}
+              <Text style={styles.infoText}>Customer Details</Text>
+            </View>
 
-        <Text style={styles.detailText}>john@gmail.com</Text>
-        <Text style={styles.detailText}>John Doe</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <View style={styles.infoRow}>
-          <BiCar />
-          <Text style={styles.infoText}>Delivered</Text>
-          <BiCheck /> <BiX />
-        </View>
-      </View>
-      <View style={styles.detailContainer}>
-        <View style={styles.infoRow}>
-          <BiMoneyWithdraw />
-          <Text style={styles.infoText}>Paid</Text>
-          <BiCheck /> <BiX />
-        </View>
-      </View>
-      <View style={styles.detailContainer}>
-        <View style={styles.infoRow}>
-          {getPlatform() === 'web' && <BiCollection />}
-          <Text style={styles.infoText}>Items</Text>
-        </View>
-      </View>
-      <View style={styles.detailContainer}>
-        <Text>Price</Text>
-        <Text>Tax</Text>
-        <Text>Discount</Text>
-        <Text>Total</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <View style={styles.infoRow}>
-          {getPlatform() === 'web' && <BiCalendar />}
-          <Text style={styles.infoText}>Date</Text>
-        </View>
-      </View>
-      <TouchableOpacity style={styles.homeBtn}>
-        <Text style={styles.homeText}>Return to Home</Text>
-      </TouchableOpacity>
+            <Text style={styles.detailText}>{orderSummary?.user?.email}</Text>
+            <Text style={styles.detailText}>{orderSummary?.user?.name}</Text>
+          </View>
+          <View style={styles.detailContainer}>
+            <View style={styles.infoRow}>
+              <BiCar />
+              <Text style={styles.infoText}>Delivered</Text>{' '}
+              {orderSummary?.isDelivered ? (
+                <BiCheck color="green" />
+              ) : (
+                <BiX color="red" />
+              )}
+            </View>
+          </View>
+          <View style={styles.detailContainer}>
+            <View style={styles.infoRow}>
+              <BiMoneyWithdraw />
+              <Text style={styles.infoText}>Paid</Text>
+              {!orderSummary?.isPaid ? (
+                <BiCheck color="green" />
+              ) : (
+                <BiX color="red" />
+              )}
+            </View>
+          </View>
+          <View style={styles.detailContainer}>
+            <View style={styles.infoRow}>
+              {getPlatform() === 'web' && <BiCollection />}
+              <Text style={styles.infoText}>Items</Text>
+            </View>
+            {orderSummary?.orderItems.map(item => {
+              return (
+                <View style={styles.itemRow}>
+                  <Image style={styles.img} source={item.image} />
+                  <Text>
+                    {item.name} x ${item.price}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+          <View style={styles.detailContainer}>
+            <Text>Price ${orderSummary?.taxPrice}</Text>
+            <Text>Tax ${orderSummary?.taxPrice}</Text>
+            <Text>Total ${orderSummary?.totalPrice}</Text>
+          </View>
+          <View style={styles.detailContainer}>
+            <View style={styles.infoRow}>
+              {getPlatform() === 'web' && <BiCalendar />}
+              <Text style={styles.infoText}>Date</Text>
+              <Text style={styles.infoText}>
+                {moment(orderSummary?.createdAt).format('DD-MM-YYYY hh:mm')}
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.homeBtn}
+            onPress={() => webNavigation('/')}>
+            <Text style={styles.homeText}>Return to Home</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </ScrollView>
   );
 };
@@ -156,9 +208,56 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: '#828282',
   },
+  img: {
+    height: 20,
+    width: 20,
+    marginRight: 8,
+  },
+  itemRow: {display: 'flex', flexDirection: 'row', marginTop: 10},
 });
 
 export default OrderDetails;
+
+let payload = {
+  user: '61f550d52bf7a4e12af88ee9',
+  orderItems: [
+    {
+      name: 'Apple MacBook Pro 13.3 inch',
+      qty: 1,
+      image: '/images/macbook.jpeg',
+      price: 1299.99,
+      product: '61f55a5762a68fe81c96d895',
+      _id: '644535b95720b4a85fcc55d4',
+    },
+    {
+      name: 'HP Neverstop 1200a',
+      qty: 1,
+      image: '/images/hp1.jpeg',
+      price: 499.99,
+      product: '61fa9e1554d0d0a51edcce08',
+      _id: '644535b95720b4a85fcc55d5',
+    },
+  ],
+  shippingAddress: {
+    address: '17',
+    city: 'Colmbo',
+    postalCode: '10401',
+    country: 'Sri Lanka',
+  },
+  paymentMethod: 'PayPal',
+  taxPrice: 270,
+  shippingPrice: 0,
+  totalPrice: 2069.98,
+  isPaid: false,
+  isDelivered: false,
+  _id: '644535b95720b4a85fcc55d3',
+  createdAt: '2023-04-23T13:42:17.379Z',
+  updatedAt: '2023-04-23T13:42:17.379Z',
+  __v: 0,
+};
+
+console.log(payload);
+
 let s = {
   user: '61f550d52bf7a4e12af88ee9',
   orderItems: [

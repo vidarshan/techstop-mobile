@@ -48,9 +48,11 @@ const WebHeader: FC<IWebHeader> = ({
       ) : (
         <>
           <View style={styles.dualWebHeader}>
-            <View style={styles.webHeaderIcon}>
+            <TouchableOpacity
+              style={styles.webHeaderIcon}
+              onPress={() => navigate(leftPath)}>
               <RiUser3Fill size={18} color="#000" />
-            </View>
+            </TouchableOpacity>
             <Text style={styles.webHeaderText}>{header}</Text>
             <TouchableOpacity
               style={styles.webHeaderIcon}

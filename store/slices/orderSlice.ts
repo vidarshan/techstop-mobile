@@ -1,6 +1,7 @@
 import {PayloadAction, createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getPlatform} from '../../utils/Platform';
+import axios from 'axios';
 
 export interface OrderDetails {
   phone: string;
@@ -13,16 +14,92 @@ export interface OrderDetails {
   payment: string;
 }
 
-interface CartState {
-  orderDetails: OrderDetails | null;
-  error: boolean;
-  loading: boolean;
+export interface OrderAddress {
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
 }
 
-const initialState: CartState = {
+export interface OrderAddress {
+  email: string;
+  name: string;
+  _id: string;
+}
+
+export interface OrderSummary {
+  shippingAddress: OrderAddress | any;
+  _id: string;
+  user: OrderAddress | any;
+  orderItems: any[];
+  paymentMethod: string;
+  taxPrice: number;
+  shippingPrice: number;
+  totalPrice: number;
+  isPaid: boolean;
+  isDelivered: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderContent {
+  orderItems: any;
+  shippingAddress: any;
+  paymentMethod: string;
+  itemsPrice: string;
+  taxPrice: string;
+  shippingPrice: string;
+  totalPrice: string;
+}
+
+interface OrderState {
+  orderDetails: OrderDetails | null;
+  orderContent: OrderContent | null;
+  error: boolean;
+  loading: boolean;
+  orderLoading: boolean;
+  orderError: boolean;
+  orderSuccess: boolean;
+  orderId: string;
+  orderSummary: OrderSummary | null;
+  orderSummaryLoading: boolean;
+  orderSummaryError: boolean;
+}
+
+const initialState: OrderState = {
   orderDetails: null,
+  orderContent: null,
   loading: false,
   error: false,
+  orderLoading: false,
+  orderError: false,
+  orderSuccess: false,
+  orderId: '',
+  orderSummary: {
+    shippingAddress: {
+      address: '',
+      city: '',
+      postalCode: '',
+      country: '',
+    },
+    _id: '',
+    user: {
+      _id: '',
+      name: '',
+      email: '',
+    },
+    orderItems: [],
+    paymentMethod: '',
+    taxPrice: 0,
+    shippingPrice: 0,
+    totalPrice: 0,
+    isPaid: false,
+    isDelivered: false,
+    createdAt: '',
+    updatedAt: '',
+  },
+  orderSummaryLoading: false,
+  orderSummaryError: false,
 };
 
 export const getInfoFromStorage = createAsyncThunk(
@@ -52,10 +129,67 @@ export const setInfoToStorage = createAsyncThunk(
   },
 );
 
+export const placeOrder = createAsyncThunk(
+  'order/placeOrder',
+  async (orderObj: OrderContent) => {
+    const tokenFromStorage = localStorage.getItem('user');
+    let jsonTokenFromStorage;
+    if (tokenFromStorage !== null) {
+      jsonTokenFromStorage = JSON.parse(tokenFromStorage);
+    } else {
+      jsonTokenFromStorage = '';
+    }
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jsonTokenFromStorage.token}`,
+      },
+    };
+    const response = await axios.post(
+      'https://tech-stop.onrender.com/api/v1/orders',
+      orderObj,
+      config,
+    );
+    return response.data;
+  },
+);
+
+export const getOrder = createAsyncThunk(
+  'order/getOrder',
+  async (id: string) => {
+    const tokenFromStorage = localStorage.getItem('user');
+    let jsonTokenFromStorage;
+    if (tokenFromStorage !== null) {
+      jsonTokenFromStorage = JSON.parse(tokenFromStorage);
+    } else {
+      jsonTokenFromStorage = '';
+    }
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jsonTokenFromStorage.token}`,
+      },
+    };
+    const response = await axios.get(
+      `https://tech-stop.onrender.com/api/v1/orders/${id}`,
+      config,
+    );
+    return response.data;
+  },
+);
+
 export const OrderSlice = createSlice({
   name: 'Order',
   initialState,
-  reducers: {},
+  reducers: {
+    setOrderSuccess: (
+      state: OrderState,
+      action: PayloadAction<{set: boolean; id: string}>,
+    ) => {
+      state.orderSuccess = action.payload.set;
+      state.orderId = action.payload.id;
+    },
+  },
   extraReducers: builder => {
     builder.addCase(getInfoFromStorage.fulfilled, (state, action) => {
       state.orderDetails = action.payload;
@@ -109,7 +243,37 @@ export const OrderSlice = createSlice({
       state.loading = false;
       state.error = false;
     });
+    builder.addCase(getOrder.fulfilled, (state, action) => {
+      state.orderSummary = action.payload;
+      state.orderSummaryLoading = false;
+      state.orderSummaryError = false;
+    });
+    builder.addCase(getOrder.pending, state => {
+      state.orderSummaryLoading = true;
+      state.orderSummaryError = false;
+    });
+    builder.addCase(getOrder.rejected, state => {
+      state.orderSummaryLoading = false;
+      state.orderSummaryError = true;
+    });
+    builder.addCase(placeOrder.fulfilled, (state, action) => {
+      state.orderId = action.payload._id;
+      state.orderSuccess = true;
+      state.orderLoading = false;
+      state.orderError = false;
+    });
+    builder.addCase(placeOrder.pending, state => {
+      state.orderLoading = true;
+      state.orderError = false;
+    });
+    builder.addCase(placeOrder.rejected, state => {
+      state.orderLoading = false;
+      state.orderError = false;
+    });
   },
 });
 export const {} = OrderSlice.actions;
 export default OrderSlice.reducer;
+
+//https://tech-stop.onrender.com/api/v1/orders/6444dfd9e047c84ca0af94d2
+//https://tech-stop.onrender.com/api/v1/orders/myorders

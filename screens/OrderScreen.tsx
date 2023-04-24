@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import {getPlatform} from '../utils/Platform';
 import WebHeader from '../components/WebHeader';
@@ -15,11 +16,17 @@ import {
   getInfoFromStorage,
   removeInfoFromStorage,
   setInfoToStorage,
+  placeOrder,
 } from '../store/slices/orderSlice';
+import {getItemsFromStorage} from '../store/slices/cartSlice';
+import {useNavigate} from 'react-router-dom';
 
 const OrderScreen = () => {
+  let webNavigation = useNavigate();
   const dispatch = useAppDispatch();
-  const {orderDetails} = useAppSelector(state => state.order);
+  const {orderDetails, orderLoading, orderSuccess} = useAppSelector(
+    state => state.order,
+  );
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [house, setHouse] = useState('');
@@ -27,6 +34,7 @@ const OrderScreen = () => {
   const [postalCode, setPostalCode] = useState('');
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
+  const {cart} = useAppSelector(state => state.cart);
   console.log(
     '🚀 ~ file: OrderScreen.tsx:19 ~ OrderScreen ~ orderDetails:',
     orderDetails,
@@ -43,9 +51,42 @@ const OrderScreen = () => {
       code: postalCode,
       payment: 'Cash',
     };
-    console.log(orderDetailsObj);
+    const sum = 100 + 10 + cart.reduce((acc: any, item) => acc + item.price, 0);
+    const mutableCartItems: any = [];
+    cart.map(item => {
+      const tempObj = {
+        countInStock: 100,
+        image: item.image,
+        name: item.name,
+        product: item.product,
+        price: item.price,
+        qty: 1,
+      };
+      mutableCartItems.push(tempObj);
+    });
+    const orderContentObj = {
+      orderItems: mutableCartItems,
+      shippingAddress: {
+        address: '17/2',
+        city: 'Colombo',
+        country: 'Canada',
+        postalCode: '11220',
+      },
+      paymentMethod: 'Cash',
+      itemsPrice: cart
+        .reduce((acc: any, item) => acc + item.price, 0)
+        .toString(),
+      taxPrice: '100',
+      shippingPrice: '10',
+      totalPrice: sum.toString(),
+    };
     dispatch(setInfoToStorage(orderDetailsObj));
+    dispatch(placeOrder(orderContentObj));
   };
+
+  useEffect(() => {
+    dispatch(getItemsFromStorage());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(getInfoFromStorage());
@@ -56,23 +97,30 @@ const OrderScreen = () => {
       {getPlatform() === 'web' && <WebHeader backHeader="Orders" />}
       <View style={styles.orderSummaryCard}>
         <Text style={styles.orderPriceHeaderText}>Your Order</Text>
-        <Text style={styles.orderTotalPriceText}>$1288.99</Text>
+        <Text style={styles.orderTotalPriceText}>
+          ${cart.reduce((acc: any, item) => acc + item.price, 0)}
+        </Text>
       </View>
       <Text style={styles.headerText}>Order Items</Text>
-      <View style={styles.orderItemCard}>
-        <View style={styles.orderItemImageTextContainer}>
-          <Image
-            style={styles.orderItemImage}
-            source={{
-              uri: 'https://res.cloudinary.com/dury4s2jk/image/upload/v1680417980/63ce49ee1ebbe1674463726_idwotp.jpg',
-            }}
-          />
-          <Text>MacBook Pro 14" 256GB</Text>
-        </View>
-        <View style={styles.orderItemPriceTextContainer}>
-          <Text style={styles.orderPriceText}>$1299.99</Text>
-        </View>
-      </View>
+      {cart.map(item => {
+        return (
+          <View key={item.product} style={styles.orderItemCard}>
+            <View style={styles.orderItemImageTextContainer}>
+              <Image
+                style={styles.orderItemImage}
+                source={{
+                  uri: item.image,
+                }}
+              />
+              <Text>{item.name}</Text>
+            </View>
+            <View style={styles.orderItemPriceTextContainer}>
+              <Text style={styles.orderPriceText}>${item.price}</Text>
+            </View>
+          </View>
+        );
+      })}
+
       <Text style={styles.headerText}>Shipping details</Text>
       <View>
         <TextInput
@@ -124,17 +172,33 @@ const OrderScreen = () => {
           placeholder="Country"
         />
       </View>
+      {!orderLoading && (
+        <TouchableOpacity
+          style={styles.removeInfoBtn}
+          onPress={() => dispatch(removeInfoFromStorage())}>
+          <Text style={styles.removeInfoText}>Clear Details</Text>
+        </TouchableOpacity>
+      )}
 
-      <TouchableOpacity
-        style={styles.removeInfoBtn}
-        onPress={() => dispatch(removeInfoFromStorage())}>
-        <Text style={styles.removeInfoText}>Clear Details</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.placeOrderBtn}
-        onPress={() => saveOrderDetails()}>
-        <Text style={styles.placeOrderText}>Place Order</Text>
-      </TouchableOpacity>
+      {orderSuccess ? (
+        <TouchableOpacity
+          style={styles.placeOrderBtn}
+          onPress={() => {
+            getPlatform() === 'web' && webNavigation('/details');
+          }}>
+          <Text style={styles.placeOrderText}>View Order Summary</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={styles.placeOrderBtn}
+          onPress={() => saveOrderDetails()}>
+          {orderLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.placeOrderText}>Place Order</Text>
+          )}
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 };
@@ -199,6 +263,8 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     paddingLeft: 2,
     paddingRight: 2,
+    paddingTop: 6,
+    paddingBottom: 6,
   },
   orderItemPriceTextContainer: {
     display: 'flex',
@@ -210,8 +276,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   orderItemImage: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     marginRight: 4,
   },
   orderItemImageTextContainer: {
