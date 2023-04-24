@@ -21,6 +21,18 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'ts-loader',
       },
+      {
+        test: /\.ttf$/,
+        loader: 'url-loader', // or directly file-loader
+        include: path.resolve(
+          __dirname,
+          'node_modules/react-native-vector-icons',
+        ),
+      },
+      // {
+      //   test: /\.(?:ico|gif|png|jpg|jpeg|svg)$/i,
+      //   type: 'asset/resource',
+      // },
     ],
   },
   plugins: [

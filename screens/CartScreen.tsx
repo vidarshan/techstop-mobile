@@ -1,0 +1,141 @@
+import React, {FC, useEffect} from 'react';
+import {
+  FlatList,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  ScrollView,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import CartItem from '../components/CartItem';
+import {getPlatform} from '../utils/Platform';
+import WebHeader from '../components/WebHeader';
+import {ICartScreen} from '../models/ICartScreen';
+import {useNavigate} from 'react-router-dom';
+import {useAppDispatch, useAppSelector} from '../store/store';
+import {
+  CartItem as ICart,
+  getItemsFromStorage,
+} from '../store/slices/cartSlice';
+import {ICartItem} from '../models/ICartItem';
+
+const CartScreen: FC<ICartScreen> = ({navigation}) => {
+  let webNavigate: any = {};
+  const dispatch = useAppDispatch();
+  const {cart} = useAppSelector(state => state.cart);
+  if (getPlatform() === 'web') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    webNavigate = useNavigate();
+  }
+
+  useEffect(() => {
+    dispatch(getItemsFromStorage());
+  }, [dispatch]);
+  console.log(cart);
+  console.log(
+    cart.reduce(
+      (accumulator: any, currentValue) => accumulator.price + currentValue,
+      0,
+    ),
+  );
+
+  return (
+    <SafeAreaView>
+      {getPlatform() === 'web' && <WebHeader type="back" backHeader="Cart" />}
+      <FlatList
+        data={cart}
+        renderItem={(item: ICartItem) => <CartItem item={item} />}
+        ListEmptyComponent={
+          <ScrollView contentContainerStyle={styles.emptyContentContainer}>
+            <View style={styles.emptyContainer}>
+              <Image
+                style={styles.emptyImage}
+                source={{
+                  uri: 'https://res.cloudinary.com/dury4s2jk/image/upload/v1680938626/smirk_sx0swu.png',
+                }}
+              />
+              <Text style={styles.emptyText}>
+                You are too picky. Add some to the cart.
+              </Text>
+            </View>
+          </ScrollView>
+        }
+        ListFooterComponent={
+          <TouchableOpacity
+            disabled={!cart.length}
+            style={!cart.length ? styles.disabled : styles.footerContainer}
+            onPress={() => {
+              getPlatform() === 'web'
+                ? webNavigate('/orders')
+                : navigation.navigate('Order', {});
+            }}>
+            <Text
+              style={
+                !cart.length ? styles.disabledText : styles.footerContainerText
+              }>
+              Proceed to Checkout
+            </Text>
+            <Text
+              style={
+                !cart.length ? styles.disabledText : styles.footerContainerText
+              }>
+              ${cart.reduce((acc: any, item: ICart) => acc + item.price, 0)}
+            </Text>
+          </TouchableOpacity>
+        }
+      />
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  emptyContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  emptyContentContainer: {
+    alignItems: 'center',
+    height: '100%',
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+  },
+  emptyText: {
+    fontSize: 16,
+    marginTop: 8,
+  },
+  footerOuterContainer: {},
+  footerContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#DF2E38',
+    borderRadius: 8,
+    margin: 6,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 15,
+    paddingBottom: 15,
+  },
+  disabled: {
+    backgroundColor: 'transparent',
+  },
+  disabledText: {
+    color: 'transparent',
+  },
+  footerContainerText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  emptyImg: {
+    width: 50,
+    height: 50,
+  },
+});
+
+export default CartScreen;
