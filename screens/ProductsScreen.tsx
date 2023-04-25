@@ -34,6 +34,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
 
   useEffect(() => {
     //dispatch(getProducts());
+    console.log('d');
     dispatch(resetErrors());
   }, [dispatch]);
   return (
