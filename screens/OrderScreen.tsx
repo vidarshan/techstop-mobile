@@ -24,9 +24,7 @@ import {useNavigate} from 'react-router-dom';
 const OrderScreen = () => {
   let webNavigation = useNavigate();
   const dispatch = useAppDispatch();
-  const {orderDetails, orderLoading, orderSuccess} = useAppSelector(
-    state => state.order,
-  );
+  const {orderLoading, orderSuccess} = useAppSelector(state => state.order);
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [house, setHouse] = useState('');
@@ -35,10 +33,6 @@ const OrderScreen = () => {
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
   const {cart} = useAppSelector(state => state.cart);
-  console.log(
-    '🚀 ~ file: OrderScreen.tsx:19 ~ OrderScreen ~ orderDetails:',
-    orderDetails,
-  );
 
   const saveOrderDetails = () => {
     const orderDetailsObj = {
@@ -193,7 +187,7 @@ const OrderScreen = () => {
           style={styles.placeOrderBtn}
           onPress={() => saveOrderDetails()}>
           {orderLoading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#000" />
           ) : (
             <Text style={styles.placeOrderText}>Place Order</Text>
           )}

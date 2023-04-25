@@ -92,7 +92,6 @@ export const getUserFromAsyncStorage = createAsyncThunk(
   'user/getUserFromStorage',
   async () => {
     const jsonValue = await AsyncStorage.getItem('@user');
-    console.log('jsonValue', jsonValue);
     return jsonValue != null ? JSON.parse(jsonValue) : null;
   },
 );
@@ -100,23 +99,37 @@ export const getUserFromAsyncStorage = createAsyncThunk(
 export const setUserToLocalStorage = createAsyncThunk(
   'user/setUserToLocalStorage',
   async (userObj: any) => {
-    const jsonValue = JSON.stringify(userObj);
-    await localStorage.setItem('user', jsonValue);
+    if (getPlatform() === 'web') {
+      const jsonValue = JSON.stringify(userObj);
+      await localStorage.setItem('user', jsonValue);
+    } else {
+      const jsonValue = JSON.stringify(userObj);
+      await AsyncStorage.setItem('user', jsonValue);
+    }
   },
 );
 
 export const removeUserFromLocalStorage = createAsyncThunk(
   'user/removeUserFromLocalStorage',
   async () => {
-    await localStorage.removeItem('user');
+    if (getPlatform() === 'web') {
+      await localStorage.removeItem('user');
+    } else {
+      await AsyncStorage.removeItem('@user');
+    }
   },
 );
 
 export const getUserFromLocalStorage = createAsyncThunk(
   'user/getUserFromLocalStorage',
   async () => {
-    const jsonValue = await localStorage.getItem('user');
-    return jsonValue != null ? JSON.parse(jsonValue) : null;
+    if (getPlatform() === 'web') {
+      const jsonValue = await localStorage.getItem('user');
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } else {
+      const jsonValue = await AsyncStorage.getItem('@user');
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    }
   },
 );
 
@@ -164,7 +177,6 @@ export const UserSlice = createSlice({
       state.registerError = true;
     });
     builder.addCase(setUserToAsyncStorage.fulfilled, state => {
-      console.log('ddd');
       state.loading = false;
       state.error = false;
     });

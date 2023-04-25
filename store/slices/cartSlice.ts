@@ -24,27 +24,35 @@ const initialState: CartState = {
 export const getItemsFromStorage = createAsyncThunk(
   'cart/getItemsFromStorage',
   async () => {
-    const jsonValue = await AsyncStorage.getItem('cart');
-    return jsonValue != null ? JSON.parse(jsonValue) : [];
+    if (getPlatform() === 'web') {
+      const jsonValue = await AsyncStorage.getItem('cart');
+      return jsonValue != null ? JSON.parse(jsonValue) : [];
+    } else {
+      const jsonValue = await AsyncStorage.getItem('@cart');
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    }
   },
 );
 
 export const removeItemFromStorage = createAsyncThunk(
   'cart/removeItemFromStorage',
   async (id: string) => {
-    console.log(id);
     if (getPlatform() === 'web') {
       const cartItems = localStorage.getItem('cart');
       const mutableCartItems = cartItems != null ? JSON.parse(cartItems) : [];
-      console.log('mutable', mutableCartItems);
       const cartItemsWithoutItem = mutableCartItems.filter(item => {
         return item.product !== id;
       });
       await localStorage.setItem('cart', JSON.stringify(cartItemsWithoutItem));
       return cartItemsWithoutItem;
     } else {
-      await AsyncStorage.removeItem('@user');
-      return {};
+      const cartItems = await AsyncStorage.getItem('@cart');
+      const mutableCartItems = cartItems != null ? JSON.parse(cartItems) : [];
+      const cartItemsWithoutItem = mutableCartItems.filter(item => {
+        return item.product !== id;
+      });
+      await AsyncStorage.setItem('cart', JSON.stringify(cartItemsWithoutItem));
+      return cartItemsWithoutItem;
     }
   },
 );
@@ -58,6 +66,13 @@ export const setItemsToStorage = createAsyncThunk(
         currentItems != null ? JSON.parse(currentItems) : [];
       mutableCurrentObj.push(cartObj);
       await localStorage.setItem('cart', JSON.stringify(mutableCurrentObj));
+      return cartObj;
+    } else {
+      const currentItems = await AsyncStorage.getItem('@cart');
+      const mutableCurrentObj =
+        currentItems != null ? JSON.parse(currentItems) : [];
+      mutableCurrentObj.push(cartObj);
+      await AsyncStorage.setItem('cart', JSON.stringify(mutableCurrentObj));
       return cartObj;
     }
   },

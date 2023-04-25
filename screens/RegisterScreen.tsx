@@ -62,7 +62,7 @@ const RegisterScreen: FC<IRegisterScreen> = ({navigation}) => {
         />
         <TouchableOpacity style={styles.authButton} onPress={() => register()}>
           {registerLoading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#000" />
           ) : (
             <Text style={styles.authText}>Register</Text>
           )}

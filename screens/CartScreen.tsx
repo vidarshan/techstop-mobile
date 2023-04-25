@@ -33,13 +33,6 @@ const CartScreen: FC<ICartScreen> = ({navigation}) => {
   useEffect(() => {
     dispatch(getItemsFromStorage());
   }, [dispatch]);
-  console.log(cart);
-  console.log(
-    cart.reduce(
-      (accumulator: any, currentValue) => accumulator.price + currentValue,
-      0,
-    ),
-  );
 
   return (
     <SafeAreaView>

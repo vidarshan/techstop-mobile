@@ -12,9 +12,6 @@ const OrderCard: FC<IOrderCard> = ({
   isDelivered,
   createdAt,
 }) => {
-  orderItems.map(item => {
-    console.log(typeof item.qty);
-  });
   return (
     <View style={styles.orderCardContainer}>
       <Text style={styles.text}>Order ID {_id}</Text>

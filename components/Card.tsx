@@ -8,16 +8,10 @@ const Card: React.FC<ICard> = ({
   _id,
   name,
   brand,
-  description,
-  rating,
-  numReviews,
   price,
-  countInStock,
-  reviews,
   altImage,
   navigation,
   webNavigation,
-  location,
 }) => {
   const cartString = useRef('Add to Cart');
   const dispatch = useAppDispatch();
@@ -37,23 +31,19 @@ const Card: React.FC<ICard> = ({
     cartString.current = 'Added';
   };
 
+  console.log('🚀 ~ file: Card.tsx:61 ~ price:', price);
+  console.log('🚀 ~ file: Card.tsx:61 ~ name:', name);
+  console.log('🚀 ~ file: Card.tsx:61 ~ altImage:', altImage);
+  console.log('🚀 ~ file: Card.tsx:61 ~ _id:', _id);
+
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={() => {
         getPlatform() === 'web'
-          ? webNavigation(`product/${_id.$oid}`)
+          ? webNavigation(`product/${_id}`)
           : navigation.navigate('Product', {
-              image: altImage,
-              name,
-              brand,
-              description,
-              rating,
-              numReviews,
-              price,
-              countInStock,
-              reviews,
-              location,
+              id: _id,
             });
       }}>
       <Image

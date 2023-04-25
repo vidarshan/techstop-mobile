@@ -11,14 +11,13 @@ import {
 } from 'react-native';
 import {IProductScreen} from '../models/IProductScreen';
 import {getPlatform} from '../utils/Platform';
-import {useLocation} from 'react-router';
 import WebHeader from '../components/WebHeader';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {IoIosStar} from 'react-icons/io';
 import {getProduct} from '../store/slices/productSlice';
 import {setItemsToStorage} from '../store/slices/cartSlice';
-const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
+const ProductScreen: FC<IProductScreen> = ({route}) => {
   let name;
   let brand;
   let description;
@@ -31,33 +30,21 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
   let id;
   const dispatch = useAppDispatch();
   const {product, loading} = useAppSelector(state => state.products);
+  name = product.name;
+  brand = product.brand;
+  description = product.description;
+  rating = product.rating;
+  numReviews = product.numReviews;
+  price = product.price;
+  countInStock = product.countInStock;
+  reviews = product.reviews;
+  image = product.altImage;
+  countInStock = product.countInStock;
+
   if (getPlatform() === 'web') {
-    let params: any = {};
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    params = useLocation();
-    console.log(params);
-    name = product.name;
-    brand = product.brand;
-    description = product.description;
-    rating = product.rating;
-    numReviews = product.numReviews;
-    price = product.price;
-    countInStock = product.countInStock;
-    reviews = product.reviews;
-    image = product.altImage;
-    countInStock = product.countInStock;
     id = location.pathname.split('/product/')[1];
   } else {
-    name = route.params.name;
-    brand = route.params.brand;
-    description = route.params.description;
-    rating = route.params.rating;
-    numReviews = route.params.numReviews;
-    price = route.params.price;
-    countInStock = route.params.countInStock;
-    reviews = route.params.reviews;
-    image = route.params.image;
-    countInStock = route.params.countInStock;
+    id = route.params.id;
   }
 
   const addToCart = (
@@ -72,23 +59,22 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
       name: productName,
       price: productPrice,
     };
+    console.log('🚀 ~ file: ProductScreen.tsx:75 ~ cartItemObj:', cartItemObj);
     dispatch(setItemsToStorage(cartItemObj));
   };
 
   useEffect(() => {
-    if (getPlatform() === 'web') {
-      dispatch(getProduct(id));
-    }
+    dispatch(getProduct(id));
+    console.log(id);
   }, [dispatch, id]);
 
-  console.log(navigation);
   return (
     <SafeAreaView>
       {getPlatform() === 'web' && (
-        <WebHeader header="Products" rightPath="/cart" back type="dual" />
+        <WebHeader header="Products" rightPath="/cart" back type="back" />
       )}
       {loading ? (
-        <ActivityIndicator color="#DF2E38" size="large" />
+        <ActivityIndicator color="#000" size="large" />
       ) : (
         <ScrollView
           contentContainerStyle={styles.contentContainer}
@@ -108,9 +94,9 @@ const ProductScreen: FC<IProductScreen> = ({route, navigation}: any) => {
               </Text>
             </View>
           </View>
-          {description?.split(', ').map((item: string) => {
+          {description?.split(', ').map((item: string, index: number) => {
             return (
-              <View style={styles.descriptionContainer}>
+              <View key={index} style={styles.descriptionContainer}>
                 <Text style={styles.description}>{item}</Text>
               </View>
             );
@@ -213,13 +199,13 @@ const styles = StyleSheet.create({
   addToCart: {
     marginTop: 20,
     marginBottom: 20,
-    backgroundColor: '#DF2E38',
+    backgroundColor: '#fbc405',
     padding: 12,
     borderRadius: 8,
   },
   addToCartText: {
     textAlign: 'center',
-    color: '#ffffff',
+    color: '#000000',
     fontWeight: '500',
     fontSize: 16,
   },

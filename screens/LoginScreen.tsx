@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -15,7 +15,7 @@ import {authUser} from '../store/slices/userSlice';
 
 const LoginScreen: FC<ILoginScreen> = () => {
   const dispatch = useAppDispatch();
-  const {loginLoading, loginError, user} = useAppSelector(state => state.user);
+  const {loginLoading, loginError} = useAppSelector(state => state.user);
   const [email, setEmail] = useState('john@gmail.com');
   const [password, setPassword] = useState('123456');
 
@@ -25,11 +25,6 @@ const LoginScreen: FC<ILoginScreen> = () => {
   const login = () => {
     dispatch(authUser({email, password}));
   };
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
   return (
     <SafeAreaView style={styles.authContainer}>
       <View
@@ -62,7 +57,7 @@ const LoginScreen: FC<ILoginScreen> = () => {
         />
         <TouchableOpacity style={styles.authButton} onPress={() => login()}>
           {loginLoading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#000" />
           ) : (
             <Text style={styles.authText}>Login</Text>
           )}

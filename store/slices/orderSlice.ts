@@ -314,6 +314,3 @@ export const OrderSlice = createSlice({
 });
 export const {} = OrderSlice.actions;
 export default OrderSlice.reducer;
-
-//https://tech-stop.onrender.com/api/v1/orders/6444dfd9e047c84ca0af94d2
-//https://tech-stop.onrender.com/api/v1/orders/myorders

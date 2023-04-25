@@ -15,6 +15,7 @@ import {getPlatform} from '../utils/Platform';
 import {useNavigate} from 'react-router-dom';
 import WebHeader from '../components/WebHeader';
 import {useLocation} from 'react-router-dom';
+import {getProducts} from '../store/slices/productSlice';
 
 const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
   let webNavigation = {};
@@ -33,8 +34,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
   const {loading, products} = useAppSelector(state => state.products);
 
   useEffect(() => {
-    //dispatch(getProducts());
-    console.log('d');
+    dispatch(getProducts());
     dispatch(resetErrors());
   }, [dispatch]);
   return (
@@ -55,7 +55,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
         <View style={styles.container}>
           {loading ? (
             <View style={styles.loaderContainer}>
-              <ActivityIndicator size="large" color="#fbc405" />
+              <ActivityIndicator size="large" color="#000" />
             </View>
           ) : (
             <>
@@ -66,13 +66,13 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
                     _id={product._id}
                     name={product.name}
                     altImage={product.altImage}
-                    price={product.price.$numberDouble}
+                    price={product.price}
                     brand={product.brand}
                     category={product.category}
                     description={product.description}
-                    rating={product.rating.$numberInt}
-                    numReviews={product.numReviews.$numberInt}
-                    countInStock={product.numReviews.$numberInt}
+                    rating={product.rating}
+                    numReviews={product.numReviews}
+                    countInStock={product.numReviews}
                     reviews={product.reviews}
                     navigation={navigation}
                     webNavigation={webNavigation}
