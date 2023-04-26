@@ -1,7 +1,6 @@
 import React, {FC, useEffect} from 'react';
 import {
   FlatList,
-  Image,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -15,11 +14,10 @@ import WebHeader from '../components/WebHeader';
 import {ICartScreen} from '../models/ICartScreen';
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../store/store';
-import {
-  CartItem as ICart,
-  getItemsFromStorage,
-} from '../store/slices/cartSlice';
+import {getItemsFromStorage} from '../store/slices/cartSlice';
 import {ICartItem} from '../models/ICartItem';
+import {getTotal} from '../utils/Calculations';
+import {FaPiggyBank} from 'react-icons/fa';
 
 const CartScreen: FC<ICartScreen> = ({navigation}) => {
   let webNavigate: any = {};
@@ -36,19 +34,16 @@ const CartScreen: FC<ICartScreen> = ({navigation}) => {
 
   return (
     <SafeAreaView>
-      {getPlatform() === 'web' && <WebHeader type="back" backHeader="Cart" />}
+      {getPlatform() === 'web' && (
+        <WebHeader header="Products" type="back" backHeader="Cart" />
+      )}
       <FlatList
         data={cart}
         renderItem={(item: ICartItem) => <CartItem item={item} />}
         ListEmptyComponent={
           <ScrollView contentContainerStyle={styles.emptyContentContainer}>
             <View style={styles.emptyContainer}>
-              <Image
-                style={styles.emptyImage}
-                source={{
-                  uri: 'https://res.cloudinary.com/dury4s2jk/image/upload/v1680938626/smirk_sx0swu.png',
-                }}
-              />
+              {getPlatform() === 'web' && <FaPiggyBank size={50} />}
               <Text style={styles.emptyText}>
                 You are too picky. Add some to the cart.
               </Text>
@@ -74,7 +69,7 @@ const CartScreen: FC<ICartScreen> = ({navigation}) => {
               style={
                 !cart.length ? styles.disabledText : styles.footerContainerText
               }>
-              ${cart.reduce((acc: any, item: ICart) => acc + item.price, 0)}
+              ${getTotal(cart)}
             </Text>
           </TouchableOpacity>
         }

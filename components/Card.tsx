@@ -22,19 +22,16 @@ const Card: React.FC<ICard> = ({
     productPrice: number,
   ) => {
     const cartItemObj = {
-      product: productId.$oid,
+      product: productId,
       image: productImage,
       name: productName,
       price: productPrice,
     };
+    console.log(productPrice);
+    console.log(cartItemObj);
     dispatch(setItemsToStorage(cartItemObj));
     cartString.current = 'Added';
   };
-
-  console.log('🚀 ~ file: Card.tsx:61 ~ price:', price);
-  console.log('🚀 ~ file: Card.tsx:61 ~ name:', name);
-  console.log('🚀 ~ file: Card.tsx:61 ~ altImage:', altImage);
-  console.log('🚀 ~ file: Card.tsx:61 ~ _id:', _id);
 
   return (
     <TouchableOpacity

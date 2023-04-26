@@ -25,6 +25,7 @@ import {useAppDispatch, useAppSelector} from '../store/store';
 import {getOrder} from '../store/slices/orderSlice';
 import moment from 'moment';
 import {useNavigate} from 'react-router-dom';
+import {clearCartFromStorage} from '../store/slices/cartSlice';
 
 const OrderDetails = () => {
   let webNavigation;
@@ -40,6 +41,7 @@ const OrderDetails = () => {
 
   useEffect(() => {
     dispatch(getOrder(orderId));
+    dispatch(clearCartFromStorage());
   }, [dispatch, orderId]);
 
   return (

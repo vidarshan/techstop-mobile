@@ -13,18 +13,24 @@ import {getPlatform} from '../utils/Platform';
 import WebHeader from '../components/WebHeader';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {
-  getInfoFromStorage,
   removeInfoFromStorage,
   setInfoToStorage,
   placeOrder,
+  getInfoFromStorage,
 } from '../store/slices/orderSlice';
-import {getItemsFromStorage} from '../store/slices/cartSlice';
 import {useNavigate} from 'react-router-dom';
+import {getTotal} from '../utils/Calculations';
 
 const OrderScreen = () => {
   let webNavigation = useNavigate();
   const dispatch = useAppDispatch();
-  const {orderLoading, orderSuccess} = useAppSelector(state => state.order);
+  const {orderLoading, orderSuccess, orderDetails} = useAppSelector(
+    state => state.order,
+  );
+  console.log(
+    '🚀 ~ file: OrderScreen.tsx:29 ~ OrderScreen ~ orderDetails:',
+    orderDetails,
+  );
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [house, setHouse] = useState('');
@@ -33,6 +39,7 @@ const OrderScreen = () => {
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
   const {cart} = useAppSelector(state => state.cart);
+  const taxAmount = (getTotal(cart) * 2) / 100;
 
   const saveOrderDetails = () => {
     const orderDetailsObj = {
@@ -45,15 +52,16 @@ const OrderScreen = () => {
       code: postalCode,
       payment: 'Cash',
     };
-    const sum = 100 + 10 + cart.reduce((acc: any, item) => acc + item.price, 0);
     const mutableCartItems: any = [];
     cart.map(item => {
+      const price =
+        typeof item.price === 'string' ? parseInt(item.price) : item.price;
       const tempObj = {
         countInStock: 100,
         image: item.image,
         name: item.name,
         product: item.product,
-        price: item.price,
+        price: price,
         qty: 1,
       };
       mutableCartItems.push(tempObj);
@@ -61,39 +69,55 @@ const OrderScreen = () => {
     const orderContentObj = {
       orderItems: mutableCartItems,
       shippingAddress: {
-        address: '17/2',
-        city: 'Colombo',
-        country: 'Canada',
-        postalCode: '11220',
+        address: orderDetails?.line,
+        city: orderDetails?.city,
+        country: orderDetails?.country,
+        postalCode: orderDetails?.code,
       },
       paymentMethod: 'Cash',
-      itemsPrice: cart
-        .reduce((acc: any, item) => acc + item.price, 0)
-        .toString(),
-      taxPrice: '100',
+      itemsPrice: getTotal(cart).toString(),
+      taxPrice: taxAmount.toString(),
       shippingPrice: '10',
-      totalPrice: sum.toString(),
+      totalPrice: getTotal(cart).toString(),
     };
     dispatch(setInfoToStorage(orderDetailsObj));
     dispatch(placeOrder(orderContentObj));
   };
 
-  useEffect(() => {
-    dispatch(getItemsFromStorage());
-  }, [dispatch]);
+  const removeData = () => {
+    dispatch(removeInfoFromStorage());
+    dispatch(getInfoFromStorage());
+    setPhone('');
+    setEmail('');
+    setHouse('');
+    setAddress('');
+    setPostalCode('');
+    setCity('');
+    setCountry('');
+  };
 
   useEffect(() => {
-    dispatch(getInfoFromStorage());
-  }, [dispatch]);
+    if (orderDetails !== null) {
+      setPhone(orderDetails?.phone);
+      setEmail(orderDetails?.email);
+      setHouse(orderDetails?.house);
+      setAddress(orderDetails?.line);
+      setPostalCode(orderDetails?.code);
+      setCity(orderDetails?.city);
+      setCountry(orderDetails?.country);
+    }
+  }, [orderDetails]);
 
   return (
     <ScrollView style={styles.orderView}>
       {getPlatform() === 'web' && <WebHeader backHeader="Orders" />}
       <View style={styles.orderSummaryCard}>
-        <Text style={styles.orderPriceHeaderText}>Your Order</Text>
+        <Text style={styles.orderPriceHeaderText}>Your Order Total</Text>
         <Text style={styles.orderTotalPriceText}>
-          ${cart.reduce((acc: any, item) => acc + item.price, 0)}
+          ${getTotal(cart) + taxAmount + 10}
         </Text>
+        <Text style={styles.orderTaxText}>Tax(2%)</Text>
+        <Text style={styles.orderTaxText}>Delivery $10</Text>
       </View>
       <Text style={styles.headerText}>Order Items</Text>
       {cart.map(item => {
@@ -169,7 +193,7 @@ const OrderScreen = () => {
       {!orderLoading && (
         <TouchableOpacity
           style={styles.removeInfoBtn}
-          onPress={() => dispatch(removeInfoFromStorage())}>
+          onPress={() => removeData()}>
           <Text style={styles.removeInfoText}>Clear Details</Text>
         </TouchableOpacity>
       )}
@@ -184,6 +208,15 @@ const OrderScreen = () => {
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
+          disabled={
+            orderDetails?.phone === '' ||
+            orderDetails?.email === '' ||
+            orderDetails?.house === '' ||
+            orderDetails?.line === '' ||
+            orderDetails?.code === '' ||
+            orderDetails?.city === '' ||
+            orderDetails?.country === ''
+          }
           style={styles.placeOrderBtn}
           onPress={() => saveOrderDetails()}>
           {orderLoading ? (
@@ -252,7 +285,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderRadius: 8,
-    margin: 16,
+    marginLeft: 16,
+    marginRight: 16,
+    marginTop: 8,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#ddd',
     paddingLeft: 2,
@@ -284,6 +320,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     marginTop: 10,
+  },
+  orderTaxText: {
+    textAlign: 'center',
+    marginTop: 6,
+    fontSize: 12,
   },
   orderPriceHeaderText: {
     fontSize: 18,

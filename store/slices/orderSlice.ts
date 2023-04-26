@@ -53,7 +53,7 @@ export interface OrderContent {
 }
 
 interface OrderState {
-  orderDetails: OrderDetails | null;
+  orderDetails: OrderDetails;
   orderContent: OrderContent | null;
   error: boolean;
   loading: boolean;
@@ -70,7 +70,16 @@ interface OrderState {
 }
 
 const initialState: OrderState = {
-  orderDetails: null,
+  orderDetails: {
+    phone: '',
+    email: '',
+    house: '',
+    line: '',
+    city: '',
+    country: '',
+    code: '',
+    payment: '',
+  },
   orderContent: null,
   loading: false,
   error: false,
@@ -258,7 +267,16 @@ export const OrderSlice = createSlice({
       state.error = false;
     });
     builder.addCase(removeInfoFromStorage.fulfilled, state => {
-      state.orderDetails = null;
+      state.orderDetails = {
+        phone: '',
+        email: '',
+        house: '',
+        line: '',
+        city: '',
+        country: '',
+        code: '',
+        payment: '',
+      };
       state.loading = false;
       state.error = false;
     });

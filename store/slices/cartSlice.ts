@@ -78,6 +78,17 @@ export const setItemsToStorage = createAsyncThunk(
   },
 );
 
+export const clearCartFromStorage = createAsyncThunk(
+  'cart/clearCartFromStorage',
+  async () => {
+    if (getPlatform() === 'web') {
+      localStorage.removeItem('cart');
+    } else {
+      AsyncStorage.removeItem('cart');
+    }
+  },
+);
+
 export const CartSlice = createSlice({
   name: 'Cart',
   initialState,
@@ -126,6 +137,19 @@ export const CartSlice = createSlice({
     builder.addCase(setItemsToStorage.rejected, state => {
       state.loading = false;
       state.error = false;
+    });
+    builder.addCase(clearCartFromStorage.fulfilled, state => {
+      state.cart = [];
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(clearCartFromStorage.pending, state => {
+      state.loading = true;
+      state.error = false;
+    });
+    builder.addCase(clearCartFromStorage.rejected, state => {
+      state.loading = false;
+      state.error = true;
     });
   },
 });

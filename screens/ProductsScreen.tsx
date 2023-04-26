@@ -16,6 +16,7 @@ import {useNavigate} from 'react-router-dom';
 import WebHeader from '../components/WebHeader';
 import {useLocation} from 'react-router-dom';
 import {getProducts} from '../store/slices/productSlice';
+import {getInfoFromStorage} from '../store/slices/orderSlice';
 
 const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
   let webNavigation = {};
@@ -35,6 +36,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
 
   useEffect(() => {
     dispatch(getProducts());
+    dispatch(getInfoFromStorage());
     dispatch(resetErrors());
   }, [dispatch]);
   return (
@@ -60,6 +62,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
           ) : (
             <>
               {products.map((product, index) => {
+                console.log(product);
                 return (
                   <Card
                     key={index}
