@@ -1,10 +1,13 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {
   View,
   ActivityIndicator,
   StyleSheet,
   ScrollView,
   SafeAreaView,
+  TextInput,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import Card from '../components/Card';
@@ -17,10 +20,12 @@ import WebHeader from '../components/WebHeader';
 import {useLocation} from 'react-router-dom';
 import {getProducts} from '../store/slices/productSlice';
 import {getInfoFromStorage} from '../store/slices/orderSlice';
+import {FaSearch} from 'react-icons/fa';
 
 const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
   let webNavigation = {};
   let location = {};
+  const [currentPage, setCurrentPage] = useState(1);
   if (getPlatform() === 'web') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     location = useLocation();
@@ -31,14 +36,40 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     webNavigation = useNavigate();
   }
+  const {loading, products, pages, pagination} = useAppSelector(
+    state => state.products,
+  );
+  const getPagination = () => {
+    var elements: JSX.Element[] = [];
+    for (let i = 1; i <= pages; i++) {
+      elements.push(
+        <TouchableOpacity
+          onPress={() => setCurrentPage(i)}
+          style={
+            pagination.toString() === i.toString()
+              ? styles.paginationItem
+              : styles.selectedPaginationItem
+          }>
+          <Text
+            style={
+              pagination.toString() === i.toString()
+                ? styles.paginationItemText
+                : styles.selectedPaginationItemText
+            }>
+            {i.toString()}
+          </Text>
+        </TouchableOpacity>,
+      );
+    }
 
-  const {loading, products} = useAppSelector(state => state.products);
+    return elements;
+  };
 
   useEffect(() => {
-    dispatch(getProducts());
+    dispatch(getProducts(currentPage));
     dispatch(getInfoFromStorage());
     dispatch(resetErrors());
-  }, [dispatch]);
+  }, [currentPage, dispatch]);
   return (
     <ScrollView style={styles.page}>
       <SafeAreaView>
@@ -54,6 +85,15 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
             />
           </View>
         )}
+        <View style={{margin: 8}}>
+          <View style={styles.searchInputRow}>
+            {getPlatform() === 'web' && <FaSearch color="#828282" />}
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search for a product"
+            />
+          </View>
+        </View>
         <View style={styles.container}>
           {loading ? (
             <View style={styles.loaderContainer}>
@@ -86,6 +126,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
             </>
           )}
         </View>
+        <View style={styles.paginationRow}>{getPagination()}</View>
       </SafeAreaView>
     </ScrollView>
   );
@@ -121,6 +162,45 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: getPlatform() === 'web' ? '100vh' : 100,
+  },
+  searchInputRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 8,
+  },
+  searchInput: {
+    borderColor: '#e2e2e2',
+    borderWidth: 1,
+    borderRadius: 8,
+    height: 36,
+    width: '100%',
+    marginLeft: 6,
+    paddingLeft: 4,
+  },
+  paginationRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    margin: 8,
+  },
+  paginationItem: {
+    backgroundColor: '#fbc405',
+    padding: 8,
+    margin: 4,
+    borderRadius: 4,
+  },
+  paginationItemText: {
+    color: '#000000',
+  },
+  selectedPaginationItem: {
+    backgroundColor: '#000000',
+    padding: 8,
+    margin: 4,
+    borderRadius: 4,
+  },
+  selectedPaginationItemText: {
+    color: '#ffffff',
   },
 });
 

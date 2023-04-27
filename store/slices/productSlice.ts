@@ -26,6 +26,8 @@ interface ProductState {
   product: Product;
   loading: boolean;
   error: boolean;
+  pages: number;
+  pagination: number;
 }
 
 const initialState: ProductState = {
@@ -48,16 +50,21 @@ const initialState: ProductState = {
     altImage: '',
   },
   products: [],
+  pages: 1,
+  pagination: 1,
   loading: false,
   error: false,
 };
 
-export const getProducts = createAsyncThunk('products/get', async () => {
-  const response = await axios.get(
-    'https://tech-stop.onrender.com/api/v1/products',
-  );
-  return response.data;
-});
+export const getProducts = createAsyncThunk(
+  'products/get',
+  async (page: number) => {
+    const response = await axios.get(
+      `https://tech-stop.onrender.com/api/v1/products?pageNumber=${page}`,
+    );
+    return response.data;
+  },
+);
 
 export const getProduct = createAsyncThunk(
   'product/get',
@@ -87,6 +94,8 @@ export const ProductSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(getProducts.fulfilled, (state, action) => {
       state.products = action.payload.products;
+      state.pages = action.payload.pages;
+      state.pagination = action.payload.page;
       state.loading = false;
       state.error = false;
     });
