@@ -27,8 +27,6 @@ const Card: React.FC<ICard> = ({
       name: productName,
       price: productPrice,
     };
-    console.log(productPrice);
-    console.log(cartItemObj);
     dispatch(setItemsToStorage(cartItemObj));
     cartString.current = 'Added';
   };

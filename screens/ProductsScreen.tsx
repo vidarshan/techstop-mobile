@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
-  TextInput,
   Text,
   TouchableOpacity,
 } from 'react-native';
@@ -20,7 +19,6 @@ import WebHeader from '../components/WebHeader';
 import {useLocation} from 'react-router-dom';
 import {getProducts} from '../store/slices/productSlice';
 import {getInfoFromStorage} from '../store/slices/orderSlice';
-import {FaSearch} from 'react-icons/fa';
 
 const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
   let webNavigation = {};
@@ -85,15 +83,16 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
             />
           </View>
         )}
-        <View style={{margin: 8}}>
+        {/* <View style={{margin: 8}}>
           <View style={styles.searchInputRow}>
             {getPlatform() === 'web' && <FaSearch color="#828282" />}
             <TextInput
               style={styles.searchInput}
               placeholder="Search for a product"
+              onChangeText={text => console.log(text)}
             />
           </View>
-        </View>
+        </View> */}
         <View style={styles.container}>
           {loading ? (
             <View style={styles.loaderContainer}>
@@ -101,8 +100,7 @@ const ProductsScreen: FC<IProductsScreen> = ({navigation}) => {
             </View>
           ) : (
             <>
-              {products.map((product, index) => {
-                console.log(product);
+              {(products || []).map((product, index) => {
                 return (
                   <Card
                     key={index}

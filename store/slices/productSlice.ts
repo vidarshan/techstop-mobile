@@ -90,6 +90,7 @@ export const ProductSlice = createSlice({
         altImage: action.payload.altImage,
       });
     },
+    searchString: () => {},
   },
   extraReducers: builder => {
     builder.addCase(getProducts.fulfilled, (state, action) => {
@@ -124,4 +125,4 @@ export const ProductSlice = createSlice({
 });
 
 export default ProductSlice.reducer;
-export const {addProduct} = ProductSlice.actions;
+export const {addProduct, searchString} = ProductSlice.actions;

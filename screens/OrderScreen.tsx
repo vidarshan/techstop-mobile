@@ -27,10 +27,6 @@ const OrderScreen = () => {
   const {orderLoading, orderSuccess, orderDetails} = useAppSelector(
     state => state.order,
   );
-  console.log(
-    '🚀 ~ file: OrderScreen.tsx:29 ~ OrderScreen ~ orderDetails:',
-    orderDetails,
-  );
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [house, setHouse] = useState('');

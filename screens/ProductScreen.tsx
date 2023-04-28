@@ -59,13 +59,11 @@ const ProductScreen: FC<IProductScreen> = ({route}) => {
       name: productName,
       price: productPrice,
     };
-    console.log('🚀 ~ file: ProductScreen.tsx:75 ~ cartItemObj:', cartItemObj);
     dispatch(setItemsToStorage(cartItemObj));
   };
 
   useEffect(() => {
     dispatch(getProduct(id));
-    console.log(id);
   }, [dispatch, id]);
 
   return (
