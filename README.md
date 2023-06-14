@@ -1,7 +1,7 @@
 <h1 align='center'>🎧 Techstop Mobile</h1>
 
 <h5 align='center'>A mobile gadget store</h5>
-<h5 align='center'>🌎https/</h5>
+<h5 align='center'>🌎 https://project-preview.vercel.app/</h5>
 
 ![Tech Stop Mobile Github](https://github.com/vidarshan/techstop-mobile/assets/48169745/d38a29e5-7f45-4644-9eb6-c171c16c84be)
 
